@@ -1,0 +1,31 @@
+{
+    "name": "nwidart/menubuilder",
+    "description": "",
+    "authors": [
+        {
+            "name": "Abir",
+            "email": "abiruzzaman.molla@gmail.com"
+        }
+    ],
+    "extra": {
+        "laravel": {
+            "providers": [],
+            "aliases": {
+
+            }
+        }
+    },
+    "autoload": {
+        "psr-4": {
+            "Modules\\Menubuilder\\": "",
+            "Modules\\Menubuilder\\App\\": "app/",
+            "Modules\\Menubuilder\\Database\\Factories\\": "database/factories/",
+            "Modules\\Menubuilder\\Database\\Seeders\\": "database/seeders/",
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Modules\\Menubuilder\\Tests\\": "tests/"
+        }
+    }
+}

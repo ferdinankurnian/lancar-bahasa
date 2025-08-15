@@ -1,0 +1,11 @@
+{
+    "name": "Menubuilder",
+    "alias": "menubuilder",
+    "description": "",
+    "keywords": [],
+    "priority": 0,
+    "providers": [
+        "Modules\\Menubuilder\\app\\Providers\\MenubuilderServiceProvider"
+    ],
+    "files": []
+}

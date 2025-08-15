@@ -1,0 +1,31 @@
+{
+    "name": "nwidart/basicpayment",
+    "description": "",
+    "authors": [
+        {
+            "name": "Nicolas Widart",
+            "email": "n.widart@gmail.com"
+        }
+    ],
+    "extra": {
+        "laravel": {
+            "providers": [],
+            "aliases": {
+
+            }
+        }
+    },
+    "autoload": {
+        "psr-4": {
+            "Modules\\BasicPayment\\": "",
+            "Modules\\BasicPayment\\App\\": "app/",
+            "Modules\\BasicPayment\\Database\\Factories\\": "database/factories/",
+            "Modules\\BasicPayment\\Database\\Seeders\\": "database/seeders/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Modules\\BasicPayment\\Tests\\": "tests/"
+        }
+    }
+}

@@ -1,0 +1,11 @@
+{
+    "name": "CertificateBuilder",
+    "alias": "certificatebuilder",
+    "description": "",
+    "keywords": [],
+    "priority": 0,
+    "providers": [
+        "Modules\\CertificateBuilder\\app\\Providers\\CertificateBuilderServiceProvider"
+    ],
+    "files": []
+}

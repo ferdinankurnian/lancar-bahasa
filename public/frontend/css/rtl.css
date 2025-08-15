@@ -1,0 +1,1516 @@
+* {
+    direction: rtl;
+    text-align: right;
+}
+
+.slick-list {
+    direction: ltr;
+}
+
+.tg-header__top .header_language_area ul .nice-select {
+    border-left: 0 !important;
+    border-right: 1px solid #eeeeee40 !important;
+    padding-left: 0;
+    padding-right: 20px;
+}
+
+.tg-header__top .header_language_area ul span.current {
+    display: block;
+}
+
+.tg-header__top .header_language_area ul .nice-select:after {
+    right: auto;
+    left: 0;
+}
+
+.tg-header__top-right {
+    gap: 10px 20px;
+}
+
+.tgmenu__action>ul li .cart-count span {
+    right: auto;
+    left: 0;
+}
+
+.tgmenu__search-form input {
+    padding: 12px 20px 10px 50px;
+}
+
+.tgmenu__search-form [type="submit"] {
+    right: auto;
+    left: 4px;
+}
+
+.tgmenu__search-form .select-grp::after {
+    right: auto;
+    left: 0;
+}
+
+.tgmenu__search-form .select-grp {
+    padding: 6px 17px 6px 0px !important;
+}
+
+.nice-select .current {
+    display: block;
+}
+
+.tgmenu__search .nice-select:after {
+    right: auto;
+    left: 20px;
+}
+
+.form-select {
+    padding-left: 0;
+    padding-right: 8px;
+}
+
+.nice-select .option {
+    padding-right: 18px;
+    text-align: right;
+}
+
+.banner__student.instructor.aos-init.aos-animate {
+    right: auto;
+    left: -4%;
+}
+
+.about__enrolled.students.aos-init.aos-animate {
+    left: auto;
+    right: -18px;
+}
+
+.arrow-btn svg {
+    transform: rotate(180deg);
+}
+
+.user_icon .menu_user_list {
+    right: auto;
+    left: 0;
+}
+
+.user_icon .menu_user_list::after {
+    right: auto;
+    left: 10px;
+}
+
+.categories-area .section__title .title,
+.categories-area .section__title .desc {
+    text-align: center;
+}
+
+.courses-area .section__title .desc {
+    text-align: center;
+}
+
+.fact__item p {
+    text-align: center;
+}
+
+.categories__item .name,
+.categories__item .courses {
+    text-align: center;
+}
+
+.categories__nav button {
+    text-align: center;
+}
+
+.about__content .section__title .title {
+    text-align: right;
+}
+
+.about__content ul li,
+.about__content ol li {
+    padding-left: 0;
+    padding-right: 45px;
+}
+
+.about__content ul li::after,
+.about__content ol li::after {
+    left: auto;
+    right: 0;
+    transform: rotateY(180deg);
+    -webkit-transform: rotateY(180deg);
+    -moz-transform: rotateY(180deg);
+    -ms-transform: rotateY(180deg);
+    -o-transform: rotateY(180deg);
+}
+
+.scroll__top i {
+    text-align: center;
+}
+
+.courses__item .avg-rating i {
+    margin-right: 0;
+    margin-left: 5px;
+}
+
+.courses__item-bottom .button a i {
+    transform: rotateY(180deg);
+    -webkit-transform: rotateY(180deg);
+    -moz-transform: rotateY(180deg);
+    -ms-transform: rotateY(180deg);
+    -o-transform: rotateY(180deg);
+}
+
+.courses__item-content .title a,
+.blog__post-content .title a {
+    background-position: 100% 0%, 100% 100%;
+}
+
+.fact__item::before {
+    right: auto;
+    left: -15px;
+}
+
+.faq__wrap .accordion-item .accordion-button::after {
+    right: auto;
+    left: 0;
+    transform: rotateY(180deg);
+    -webkit-transform: rotateY(180deg);
+    -moz-transform: rotateY(180deg);
+    -ms-transform: rotateY(180deg);
+    -o-transform: rotateY(180deg);
+}
+
+.features__area .section__title p {
+    text-align: center;
+}
+
+.features__item .features__icon,
+.features__content .title,
+.features__content p {
+    text-align: center;
+}
+
+.about__content {
+    margin-left: 110px;
+    margin-right: 65px;
+}
+
+.about__images {
+    margin-left: -25px;
+    margin-right: 196px;
+}
+
+.about__enrolled {
+    left: auto;
+    right: -90px;
+    bottom: 35px;
+}
+
+.section__title .title,
+.section__title .desc {
+    text-align: center;
+}
+
+.faq__content .section__title .title,
+.instructor__content-wrap .section__title .title {
+    text-align: right;
+}
+
+.instructor__thumb-two .shape-one {
+    left: auto;
+    right: 0;
+    transform: rotateY(180deg);
+    -webkit-transform: rotateY(180deg);
+    -moz-transform: rotateY(180deg);
+    -ms-transform: rotateY(180deg);
+    -o-transform: rotateY(180deg);
+}
+
+.blog__post-area .section__title p {
+    text-align: center;
+}
+
+.blog__post-meta .title a:hover {
+    background-size: 0 2px, 100% 2px;
+}
+
+.blog__post-meta .list-wrap li i {
+    margin-right: 0;
+    margin-left: 8px;
+}
+
+.footer__top .row [class*="col-"]:nth-child(2) .footer__widget {
+    margin-left: 0;
+    padding-right: 60px;
+}
+
+.footer__widget-title::before {
+    left: auto;
+    right: 0;
+}
+
+.footer__link .list-wrap li a::before,
+.footer__bottom-menu .list-wrap li a::before {
+    transform-origin: left top;
+}
+
+.footer__link .list-wrap li a:hover::before,
+.footer__bottom-menu .list-wrap li a:hover::before {
+    transform-origin: right top;
+}
+
+.footer__bottom-menu .list-wrap li a::after {
+    right: auto;
+    left: -16px;
+}
+
+.scroll__top {
+    right: auto;
+    left: 50px;
+}
+
+.courses-widget .form-check-label {
+    margin-left: 0 !important;
+    margin-right: 10px !important;
+}
+
+.form-check-input[type="checkbox"] {
+    transform: rotateY(180deg) !important;
+    -webkit-transform: rotateY(180deg) !important;
+    -moz-transform: rotateY(180deg) !important;
+    -ms-transform: rotateY(180deg) !important;
+    -o-transform: rotateY(180deg) !important;
+}
+
+.pagination-wrap .page-item i,
+.pagination-wrap .page-item span i {
+    transform: rotateY(180deg);
+    -webkit-transform: rotateY(180deg);
+    -moz-transform: rotateY(180deg);
+    -ms-transform: rotateY(180deg);
+    -o-transform: rotateY(180deg);
+}
+
+.courses-top-right-select::after {
+    right: auto;
+    left: 12px;
+}
+
+.courses-top-right {
+    margin-left: 0 !important;
+    margin-right: auto !important;
+}
+
+.courses__details-meta .list-wrap li::before {
+    right: auto;
+    left: -17px;
+}
+
+.courses__details-meta .list-wrap .author-two img {
+    margin-right: 0;
+    margin-left: 5px;
+}
+
+.courses__item-meta li i {
+    margin-right: 0;
+    margin-left: 7px;
+}
+
+.arrow-btn i {
+    transform: rotateY(180deg);
+    -webkit-transform: rotateY(180deg);
+    -moz-transform: rotateY(180deg);
+    -ms-transform: rotateY(180deg);
+    -o-transform: rotateY(180deg);
+}
+
+.courses__details-content .nav-tabs {
+    padding-right: 0;
+}
+
+.breadcrumb__content .breadcrumb .breadcrumb-separator {
+    transform: rotateY(180deg);
+    -webkit-transform: rotateY(180deg);
+    -moz-transform: rotateY(180deg);
+    -ms-transform: rotateY(180deg);
+    -o-transform: rotateY(180deg);
+}
+
+.sidebar-search-form button {
+    right: auto;
+    left: 16px;
+}
+
+.sidebar-search-form input {
+    padding: 15px 20px 15px 45px;
+}
+
+.blog-widget .shop-cat-list .list-wrap li a i {
+    transform: rotateY(180deg);
+    -webkit-transform: rotateY(180deg);
+    -moz-transform: rotateY(180deg);
+    -ms-transform: rotateY(180deg);
+    -o-transform: rotateY(180deg);
+}
+
+.instructor__details-content>.list-wrap>li::before {
+    right: auto;
+    left: -17px;
+}
+
+.instructor__details-nav button {
+    transform: rotate(180deg);
+    -webkit-transform: rotate(180deg);
+    -moz-transform: rotate(180deg);
+    -ms-transform: rotate(180deg);
+    -o-transform: rotate(180deg);
+}
+
+.dashboard__counter-item .content,
+.dashboard__counter-item .content p {
+    text-align: center;
+}
+
+.dashboard_courses .edit_btn {
+    right: auto;
+    left: 25px;
+}
+
+.courses__item-bottom-two .list-wrap li::before {
+    right: auto;
+    left: -17px;
+}
+
+.courses__item-content-two {
+    padding: 0 0px 20px 25px;
+}
+
+.courses__item-bottom-two {
+    padding: 13px 0px 13px 25px;
+}
+
+.input-group:not(.has-validation)>.dropdown-toggle:nth-last-child(n + 3),
+.input-group:not(.has-validation)>.form-floating:not(:last-child)>.form-control,
+.input-group:not(.has-validation)>.form-floating:not(:last-child)>.form-select,
+.input-group:not(.has-validation)> :not(:last-child):not(.dropdown-toggle):not(.dropdown-menu):not(.form-floating) {
+    border-top-right-radius: 0.375rem;
+    border-bottom-right-radius: 0.375rem;
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+}
+
+.input-group> :not(:first-child):not(.dropdown-menu):not(.valid-tooltip):not(.valid-feedback):not(.invalid-tooltip):not(.invalid-feedback) {
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+    border-top-left-radius: 0.375rem;
+    border-bottom-left-radius: 0.375rem;
+}
+
+.select2-container--default .select2-selection--single .select2-selection__arrow {
+    right: auto;
+    left: 20px;
+}
+
+.instructor__profile-form.course-form label {
+    padding-right: 30px;
+}
+
+.instructor__profile-form.course-form input {
+    float: right;
+}
+
+.accordion-button.course-section-btn .bold-text,
+.card.course-section-item .edit_course_icons .bold-text {
+    margin-left: 0 !important;
+    margin-right: 0.5rem !important;
+}
+
+.btn-close {
+    margin-left: 0 !important;
+    margin-right: auto !important;
+}
+
+.instructor__cover-info-left button {
+    right: auto;
+    left: 10px;
+}
+
+.banner__images-two .about__enrolled {
+    left: auto;
+    right: 30px;
+}
+
+.banner__student {
+    right: auto;
+    left: 0%;
+}
+
+.banner__images-two {
+    margin-right: 0;
+    left: 60px;
+}
+
+.features__item-shape {
+    right: auto;
+    left: 28px;
+}
+
+.features__area-two .section__title p {
+    text-align: center;
+}
+
+.fact__item-wrap .fact__item::before {
+    right: auto;
+    left: -45px;
+}
+
+.instructor__content-three {
+    margin-left: 0;
+    margin-right: 40px;
+}
+
+.tgmenu__search-form .form-select .current {
+    top: -1px;
+}
+
+.instructor__shape img {
+    right: auto;
+    left: 24%;
+}
+
+.nice-select {
+    padding-left: 30px;
+    padding-right: 18px;
+}
+
+.nice-select:after {
+    right: auto;
+    left: 12px;
+}
+
+.form-select {
+    background-repeat: no-repeat;
+    background-position: left 0.75rem center;
+}
+
+.tgmobile__menu .navigation li>a {
+    padding: 10px 25px 10px 60px;
+}
+
+.tgmobile__search button {
+    right: auto;
+    left: 20px;
+}
+
+.tgmobile__search input {
+    padding: 10px 20px 10px 45px;
+}
+
+.tgmenu__navbar-wrap ul {
+    margin: 0 20px 0 auto;
+}
+
+.faq__wrap .accordion-item .accordion-button {
+    padding: 22px 0px 22px 30px;
+    text-align: right;
+}
+
+.courses__sidebar_button::before {
+    right: auto;
+    left: 26px;
+}
+
+.courses__sidebar_button::after {
+    right: auto;
+    left: 27px;
+}
+
+.brand-area-two {
+    transform: rotate(3.5deg);
+    -webkit-transform: rotate(3.5deg);
+    -moz-transform: rotate(3.5deg);
+    -ms-transform: rotate(3.5deg);
+    -o-transform: rotate(3.5deg);
+}
+
+.marquee_mode {
+    direction: ltr;
+}
+
+.testimonial__item::before {
+    right: auto;
+    left: 43px;
+    transform: rotateY(180deg);
+}
+
+.bsb-timeline-1 .timeline:after {
+    left: auto;
+    right: 0;
+}
+
+.bsb-timeline-1 .timeline>.timeline-item:before {
+    left: auto;
+    right: -8px;
+}
+
+.bsb-timeline-1 .timeline>.timeline-item .timeline-content {
+    padding: 0 2.5rem 2.5rem 0;
+}
+
+.tgmobile__menu .navigation li.menu-item-has-children .dropdown-btn {
+    right: auto;
+    left: 20px;
+}
+
+.invoice .col-lg-8.text-end div {
+    text-align: left;
+}
+
+.banner-area-two.banner-bg-two.tg-motion-effects {
+    transform: scaleX(-1);
+    -webkit-transform: scaleX(-1);
+    -moz-transform: scaleX(-1);
+    -ms-transform: scaleX(-1);
+    -o-transform: scaleX(-1);
+}
+
+.container.banner-area-two-container {
+    transform: scaleX(-1);
+    -webkit-transform: scaleX(-1);
+    -moz-transform: scaleX(-1);
+    -ms-transform: scaleX(-1);
+    -o-transform: scaleX(-1);
+}
+
+.about__content ul li,
+.about__content ol li,
+.wsus_content-box ul li,
+.wsus_content-box ol li,
+.choose__content-two ul li,
+.choose__content-two ol li,
+.about__content-six ul li,
+.about__content-six ol li,
+.choose__content-four ul li,
+.choose__content-four ol li,
+.about__content-four ul li,
+.about__content-four ol li {
+    padding-left: 0;
+    padding-right: 45px;
+}
+
+.about__content ul li::after,
+.about__content ol li::after,
+.wsus_content-box ul li::after,
+.wsus_content-box ol li::after,
+.choose__content-two ul li::after,
+.choose__content-two ol li::after,
+.about__content-six ul li::after,
+.about__content-six ol li::after,
+.choose__content-four ul li::after,
+.choose__content-four ol li::after,
+.about__content-four ul li::after,
+.about__content-four ol li::after {
+    left: auto;
+    right: 0;
+    transform: rotateY(180deg);
+    -webkit-transform: rotateY(180deg);
+    -moz-transform: rotateY(180deg);
+    -ms-transform: rotateY(180deg);
+    -o-transform: rotateY(180deg);
+}
+
+.yoga_why_choose .choose__content-inner-img {
+    right: auto;
+    left: 0;
+}
+
+.slider__search-form input {
+    padding: 18px 25px 18px 25px;
+}
+
+.categories__item-four a {
+    text-align: center;
+}
+
+.newsletter__form-two .btn {
+    justify-content: center;
+}
+
+.testimonial__item-two::before {
+    right: auto;
+    left: 45px;
+    transform: rotateY(180deg);
+    -webkit-transform: rotateY(180deg);
+    -moz-transform: rotateY(180deg);
+    -ms-transform: rotateY(180deg);
+    -o-transform: rotateY(180deg);
+}
+
+.home_business .slider__search-form button {
+    right: auto;
+    left: 4px;
+}
+
+.home_university .about__enrolled {
+    left: auto !important;
+}
+
+.home_university .about__content-four .title {
+    text-align: right;
+}
+
+.home_university .about-area-four .about__enrolled {
+    right: auto !important;
+    left: 0 !important;
+}
+
+.home_business .testimonial-pagination-two {
+    padding-left: 0;
+    padding-right: 80px;
+}
+
+.home_business .testimonial__area-five .col-xl-6.col-lg-6.ms-auto {
+    margin-left: 0 !important;
+    margin-right: auto;
+}
+
+.home_business .newsletter__btn {
+    text-align: left;
+}
+
+.youga_testimonial .testimonial-pagination {
+    padding-right: 0;
+    padding-left: 21.5%;
+}
+
+.home_language .categories__item-two a .content img {
+    margin-right: 0;
+    margin-left: 5px;
+}
+
+.home_language .testimonial__area-five .testimonial-pagination-two {
+    margin-left: 0;
+    margin-right: 35px;
+}
+
+.home_language .fact__img-wrap {
+    right: auto;
+    left: 0;
+}
+
+.home_kindergarten .testimonial__area-four .testimonial-pagination-two {
+    margin-left: 0;
+    margin-right: -70px;
+}
+
+.home_kindergarten .courses-area-four .section__title .title,
+.home_kindergarten .features__area-six .section__title .title.bold,
+.home_business .blog__post-area-seven .section__title .title,
+.home_business .categories-area-three .section__title .title,
+.home_business .courses-area-six .section__title .title,
+.home_university .cta__content .title,
+.home_university .cta__content p,
+.categories__item-three a .name,
+.home_kitchen .blog__post-area-eight .section__title h2,
+.home_kitchen .courses-area-seven .section__title h2,
+.home_kitchen .categories-area-four .section__title h2 {
+    text-align: center;
+}
+
+
+
+
+
+
+
+
+@media (min-width: 1400px) and (max-width: 1600px) {
+
+    /* home 1 start */
+    .banner__student {
+        left: 0;
+    }
+
+    .about__content {
+        margin-left: 0;
+        margin-right: 40px;
+    }
+
+    /* home 1 end */
+}
+
+@media (min-width: 1200px) and (max-width: 1399.99px) {
+
+    /* home 1 start */
+    .banner__student {
+        left: 0;
+    }
+
+    .about__content {
+        margin-left: 0;
+        margin-right: 30px;
+    }
+
+    .banner__student.instructor.aos-init.aos-animate {
+        left: 0;
+    }
+
+    /* home 1 end */
+}
+
+@media (min-width: 992px) and (max-width: 1199.99px) {
+
+    /* home 1 start */
+    .tgmenu__action {
+        margin: 0 0 0 25px;
+    }
+
+    .tgmenu__search {
+        margin-left: 13px;
+        margin-right: auto;
+    }
+
+    .about__images {
+        margin-left: 0;
+        margin-right: 0;
+    }
+
+    .about__content {
+        margin-left: 0;
+        margin-right: 0;
+    }
+
+    .about__enrolled {
+        right: 0;
+    }
+
+    .section__title .title {
+        font-size: 34px;
+    }
+
+    .footer__bottom-menu .list-wrap li a::before,
+    .footer__bottom-menu .list-wrap li a::after {
+        display: none;
+    }
+
+    /* home 1 end */
+    .banner__student {
+        left: -70px;
+    }
+
+    .courses__item-content-two {
+        padding: 0 20px 20px;
+    }
+
+    .courses__item-bottom-two {
+        padding: 13px 20px;
+    }
+
+    .dashboard__nav-wrap .nav-tabs {
+        padding-right: 0;
+    }
+
+    .accordion-header .item-action {
+        justify-content: end;
+        padding-left: 35px;
+    }
+
+    .accordion-body.ui-sortable .item-action,
+    .create_couese_item .item-action {
+        right: auto;
+        left: 0px;
+    }
+}
+
+@media (min-width: 768px) and (max-width: 991.99px) {
+
+    /* home 1 start */
+    .about__images {
+        margin-left: 0;
+        margin-right: 0;
+    }
+
+    .about__content {
+        margin-left: 0;
+        margin-right: 0;
+    }
+
+    .instructor__content .title,
+    .instructor__content .designation {
+        text-align: center;
+    }
+
+    .banner__btn-two {
+        justify-content: start;
+    }
+
+    .footer__top .row [class*="col-"]:nth-child(2) .footer__widget {
+        padding-right: 0;
+    }
+
+    .tgmenu__action {
+        margin: 0 0 0 25px;
+    }
+
+    .tgmenu__search {
+        margin-left: 13px;
+        margin-right: auto;
+    }
+
+    /* home 1 end */
+    .banner__student {
+        left: -150px;
+    }
+
+    .courses__item-content-two {
+        padding: 0 20px 20px;
+    }
+
+    .courses__item-bottom-two {
+        padding: 13px 20px;
+    }
+
+    .dashboard__nav-wrap .nav-tabs {
+        padding-right: 0;
+    }
+
+    .accordion-header .item-action {
+        justify-content: end;
+        padding-left: 35px;
+    }
+
+    .accordion-body.ui-sortable .item-action,
+    .create_couese_item .item-action {
+        right: auto;
+        left: 0px;
+    }
+}
+
+@media (min-width: 576px) and (max-width: 767.99px) {
+
+    /* home 1 end */
+    .about__images {
+        margin-left: 0;
+        margin-right: 0;
+    }
+
+    .about__content {
+        margin-left: 0;
+        margin-right: 0;
+    }
+
+    .instructor__content .title,
+    .instructor__content .designation,
+    .newsletter__content .title {
+        text-align: center;
+    }
+
+    .banner__btn-two {
+        justify-content: start;
+    }
+
+    .footer__top .row [class*="col-"]:nth-child(2) .footer__widget {
+        padding-right: 0;
+    }
+
+    /* home 1 end */
+
+    /* home 2 start */
+    .banner__btn-two {
+        justify-content: start;
+    }
+
+    .fact__item-wrap {
+        gap: 30px;
+    }
+
+    .banner__images-two {
+        left: 0;
+    }
+
+    .instructor__content-three {
+        margin-right: 0;
+    }
+
+    .banner__student {
+        right: auto;
+        left: -15%;
+    }
+
+    .banner__student {
+        left: 0;
+    }
+
+    /* home 2 end */
+    .courses-top-right {
+        margin-left: auto !important;
+    }
+
+    .courses__item-content-two {
+        padding: 0 20px 20px;
+    }
+
+    .courses__item-bottom-two {
+        padding: 13px 20px;
+    }
+
+    .dashboard__nav-wrap .nav-tabs {
+        padding-right: 0;
+    }
+
+    .accordion-header .item-action {
+        justify-content: end;
+        padding-left: 35px;
+    }
+
+    .accordion-body.ui-sortable .item-action,
+    .create_couese_item .item-action {
+        right: auto;
+        left: 0px;
+    }
+}
+
+@media (max-width: 575.99px) {
+
+    /* home 1 start */
+    .about__images {
+        margin-left: 0;
+        margin-right: 0;
+    }
+
+    .about__content {
+        margin-left: 0;
+        margin-right: 0;
+    }
+
+    .instructor__content-two,
+    .instructor__content-two .title,
+    .instructor__content-two p,
+    .newsletter__content .title,
+    .instructor__content .title,
+    .instructor__content .designation {
+        text-align: center;
+    }
+
+    .faq__wrap .accordion-item .accordion-button {
+        padding: 22px 0px 30px 22px;
+        text-align: right;
+    }
+
+    .instructor__content-two .tg-button-wrap {
+        justify-content: center;
+    }
+
+    .footer__top .row [class*="col-"]:nth-child(2) .footer__widget {
+        padding-right: 0;
+    }
+
+    /* home 1 end */
+
+    /* home 2 start */
+    .banner__btn-two {
+        justify-content: start;
+    }
+
+    .banner__student {
+        display: none;
+    }
+
+    .fact__item-wrap {
+        gap: 30px;
+    }
+
+    .banner__images-two {
+        left: 0;
+    }
+
+    .instructor__content-three {
+        margin-right: 0;
+    }
+
+    /* home 2 end */
+    .courses-top-right {
+        margin-left: auto !important;
+    }
+
+    .courses__item-content-two {
+        padding: 0 20px 20px;
+    }
+
+    .courses__item-bottom-two {
+        padding: 13px 20px;
+    }
+
+    .dashboard__nav-wrap .nav-tabs {
+        padding-right: 0;
+    }
+
+    .accordion-header .item-action {
+        justify-content: end;
+        padding-left: 30px;
+    }
+
+    .accordion-body.ui-sortable .item-action,
+    .create_couese_item .item-action {
+        right: auto;
+        left: 0px;
+    }
+}
+
+/* ---------------------------
+----- Yoga home page css -----
+------------------------------ */
+.tgmenu__main-menu li.menu-item-has-children>.sub-menu .menu-item-has-children:hover a::after,
+.tgmenu__main-menu li.menu-item-has-children>.sub-menu .menu-item-has-children.active a::after {
+    transform: rotate(180deg);
+}
+
+.tgmenu__navbar-wrap ul li .sub-menu {
+    left: auto;
+    right: 0;
+}
+
+.tgmenu__navbar-wrap ul li .sub-menu .sub-menu {
+    right: 100%;
+    left: 0;
+}
+
+.section__title.white-title p,
+.features__content-four .title,
+.features__content-four p {
+    text-align: center;
+}
+
+.about__info-list-item i {
+    transform: rotateY(180deg);
+}
+
+.courses__wishlist-two {
+    right: auto;
+    left: 20px;
+}
+
+.courses__price-two {
+    left: auto;
+    right: 20px;
+}
+
+.circle__text-wrap .content .circle {
+    direction: ltr;
+}
+
+.instructor__thumb-four,
+.testimonial__item-three .icon,
+.testimonial__item-three p,
+.testimonial__bottom .title,
+.section__title p {
+    text-align: center;
+}
+
+.instructor__content-four .title a,
+.instructor__content-four span,
+.testimonial__bottom span {
+    display: block;
+    text-align: center;
+}
+
+.footer__newsletter-form button {
+    right: auto;
+    left: 0;
+    border-radius: 6px 0px 0px 6px;
+    -webkit-border-radius: 6px 0px 0px 6px;
+    -moz-border-radius: 6px 0px 0px 6px;
+    -ms-border-radius: 6px 0px 0px 6px;
+    -o-border-radius: 6px 0px 0px 6px;
+}
+
+.event__content-wrap .section__title .title {
+    text-align: right;
+}
+
+.footer__newsletter-form input {
+    padding: 13px 20px 13px 140px;
+}
+
+.banner__content-four {
+    text-align: right;
+}
+
+.banner__content-four .title {
+    text-align: right;
+}
+
+@media (min-width: 992px) and (max-width: 1199.99px) {
+    .tgmenu__nav {
+        justify-content: space-between;
+    }
+}
+
+@media (min-width: 576px) and (max-width: 767.99px) {
+    .mobile-login-btn {
+        margin-left: 20px;
+        margin-right: auto;
+    }
+
+    .cta__content-two .title {
+        text-align: center;
+    }
+}
+
+@media (max-width: 575.99px) {
+    .mobile-login-btn {
+        margin-left: 20px;
+        margin-right: auto;
+    }
+
+    .cta__content-two .title {
+        text-align: center;
+    }
+}
+
+/* ---------------------------
+----- Kitchen home page css -----
+------------------------------ */
+.banner__images-seven .about__enrolled {
+    right: auto;
+    left: 0;
+}
+
+.testimonial__area-six .section__title .title,
+.about-area-six .section__title .title {
+    text-align: right;
+}
+
+.about-area-six .about__info-list-item i {
+    transform: rotateY(180deg);
+}
+
+.blog__post-area-eight .section__title p {
+    text-align: center;
+}
+
+.banner-bg-seven .slider__search-form button {
+    right: auto;
+    left: 6px;
+}
+
+.testimonial__area-six .testimonial__nav-two button i {
+    transform: rotateY(180deg);
+    -webkit-transform: rotateY(180deg);
+    -moz-transform: rotateY(180deg);
+    -ms-transform: rotateY(180deg);
+    -o-transform: rotateY(180deg);
+}
+
+@media (min-width: 992px) and (max-width: 1199.99px) {
+    .tg-header__style-eight .tgmenu__action {
+        margin: 0 auto 0 25px;
+    }
+}
+
+@media (min-width: 768px) and (max-width: 991.99px) {
+    .tg-header__style-eight .tgmenu__action {
+        margin: 0 auto 0 25px;
+    }
+}
+
+@media (min-width: 576px) and (max-width: 767.99px) {
+    .mobile-login-btn {
+        margin-left: 20px;
+        margin-right: auto;
+    }
+
+    .cta__content-two .title {
+        text-align: center;
+    }
+}
+
+@media (max-width: 575.99px) {
+    .mobile-login-btn {
+        margin-left: 20px;
+        margin-right: auto;
+    }
+
+    .cta__content-two .title {
+        text-align: center;
+    }
+
+    .testimonial__item-four .rating {
+        justify-content: right;
+    }
+}
+
+/* ---------------------------
+----- Kindergarten home page css -----
+------------------------------ */
+.tgmenu__navbar-wrap ul li .sub-menu {
+    left: auto;
+    right: 0;
+}
+
+.tgmenu__main-menu li.menu-item-has-children>.sub-menu .menu-item-has-children:hover a::after,
+.tgmenu__main-menu li.menu-item-has-children>.sub-menu .menu-item-has-children.active a::after {
+    transform: rotate(180deg);
+}
+
+.tgmenu__navbar-wrap ul li .sub-menu {
+    left: auto;
+    right: 0;
+}
+
+.tgmenu__navbar-wrap ul li .sub-menu .sub-menu {
+    right: 100%;
+    left: 0;
+}
+
+.tg-header__style-five .tgmenu__navbar-wrap ul {
+    margin: 0 30px 0 auto;
+}
+
+.tg-header__style-five .select-grp-two {
+    margin-left: 0;
+    margin-right: 55px;
+}
+
+.section__title p,
+.features__content-five,
+.features__content-five .title,
+.features__content-five p {
+    text-align: center;
+}
+
+.about__content-five .section__title .title.bold,
+.faq__content-two .section__title .title.bold {
+    text-align: right;
+}
+
+.instructor__content-five .title a,
+.instructor__content-five span {
+    display: block;
+    text-align: center;
+}
+
+.footer__newsletter-form-two button {
+    right: auto;
+    left: 0;
+}
+
+.courses__item-content-bottom-two .list-wrap li::before {
+    right: auto;
+    left: -26px;
+}
+
+.about__info-list-item i {
+    transform: rotateY(180deg);
+    -webkit-transform: rotateY(180deg);
+    -moz-transform: rotateY(180deg);
+    -ms-transform: rotateY(180deg);
+    -o-transform: rotateY(180deg);
+}
+
+.footer__newsletter-form input {
+    padding: 13px 20px 13px 140px;
+}
+
+.faq__wrap .accordion-item .accordion-button {
+    padding: 22px 22px 22px 30px;
+}
+
+@media (min-width: 1200px) and (max-width: 1399.99px) {
+    .tg-header__style-five .select-grp-two {
+        margin-left: 0;
+        margin-right: 30px;
+    }
+}
+
+
+@media (min-width: 992px) and (max-width: 1199.99px) {
+    .tg-header__style-five .select-grp-two {
+        margin-left: auto;
+        margin-right: 30px;
+    }
+}
+
+@media (min-width: 768px) and (max-width: 991.99px) {
+
+    .tg-header__style-five .tgmenu__nav {
+        justify-content: initial;
+    }
+
+    .tg-header__style-five .select-grp-two {
+        margin-left: auto;
+        margin-right: 30px;
+    }
+
+    .testimonial__item-four .rating {
+        justify-content: start;
+    }
+}
+
+@media (min-width: 576px) and (max-width: 767.99px) {
+    .mobile-login-btn {
+        margin-left: 20px;
+        margin-right: auto;
+    }
+
+    .cta__content-two .title {
+        text-align: center;
+    }
+
+    .testimonial__item-four .rating {
+        justify-content: start;
+    }
+}
+
+@media (max-width: 575.99px) {
+    .mobile-login-btn {
+        margin-left: 20px;
+        margin-right: auto;
+    }
+
+    .cta__content-two .title {
+        text-align: center;
+    }
+
+    .testimonial__item-four .rating {
+        justify-content: right;
+    }
+}
+
+/* ---------------------------
+----- language home page css -----
+------------------------------ */
+.banner__images-six .about__enrolled-two {
+    left: auto;
+    right: 10%;
+}
+
+.banner__review {
+    right: auto;
+    left: 3%;
+}
+
+.tg-header__style-six .tgmenu__navbar-wrap ul li .sub-menu {
+    left: auto;
+    right: 0;
+}
+
+.tg-header__style-six .tgmenu__navbar-wrap ul li .sub-menu {
+    left: auto;
+    right: 0;
+}
+
+.tg-header__style-six .tgmenu__navbar-wrap ul li .sub-menu .sub-menu {
+    right: 100%;
+    left: 0;
+}
+
+.tgmenu__main-menu li.menu-item-has-children>.sub-menu .menu-item-has-children:hover a::after,
+.tgmenu__main-menu li.menu-item-has-children>.sub-menu .menu-item-has-children.active a::after {
+    transform: rotate(180deg);
+}
+
+.banner__content-six .about__info-list-item i {
+    transform: rotateY(180deg);
+}
+
+.section__title .title.bold {
+    text-align: right;
+}
+
+.view-all-categories {
+    text-align: left;
+}
+
+.view-all-categories svg,
+.categories__item-two a .icon i {
+    transform: rotateY(180deg);
+    -webkit-transform: rotateY(180deg);
+    -moz-transform: rotateY(180deg);
+    -ms-transform: rotateY(180deg);
+    -o-transform: rotateY(180deg);
+}
+
+.faq__wrap .accordion-item .accordion-button {
+    padding: 22px 20px 22px 30px;
+}
+
+.faq__language-wrap {
+    left: auto;
+    right: 21%;
+}
+
+.blog__post-area-six .section__title p,
+.courses-area-five .title.bold {
+    text-align: center;
+}
+
+.faq__language-wrap .title {
+    text-align: center;
+}
+
+
+
+
+
+
+
+
+@media (min-width: 1200px) and (max-width: 1399.99px) {
+    .tg-header__style-five .select-grp-two {
+        margin-left: 0;
+        margin-right: 30px;
+    }
+
+    .faq__img-four .main-img {
+        gap: 15px;
+    }
+}
+
+
+@media (min-width: 992px) and (max-width: 1199.99px) {
+    .tg-header__style-five .select-grp-two {
+        margin-left: auto;
+        margin-right: 30px;
+    }
+
+    .tg-header__style-six .tgmenu__action {
+        margin: 0 auto 0 25px;
+    }
+}
+
+@media (min-width: 768px) and (max-width: 991.99px) {
+
+    .tg-header__style-five .tgmenu__nav {
+        justify-content: initial;
+    }
+
+    .tg-header__style-five .select-grp-two {
+        margin-left: auto;
+        margin-right: 30px;
+    }
+
+    .testimonial__item-four .rating {
+        justify-content: right;
+    }
+}
+
+@media (min-width: 576px) and (max-width: 767.99px) {
+
+    .mobile-login-btn {
+        margin-left: 20px;
+        margin-right: auto;
+    }
+
+    .cta__content-two .title {
+        text-align: center;
+    }
+}
+
+@media (max-width: 575.99px) {
+    .mobile-login-btn {
+        margin-left: 20px;
+        margin-right: auto;
+    }
+
+    .cta__content-two .title {
+        text-align: center;
+    }
+
+    .testimonial__item-four .rating {
+        justify-content: right;
+    }
+}

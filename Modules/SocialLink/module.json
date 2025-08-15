@@ -1,0 +1,11 @@
+{
+    "name": "SocialLink",
+    "alias": "sociallink",
+    "description": "",
+    "keywords": [],
+    "priority": 0,
+    "providers": [
+        "Modules\\SocialLink\\app\\Providers\\SocialLinkServiceProvider"
+    ],
+    "files": []
+}

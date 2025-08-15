@@ -1,0 +1,11 @@
+{
+    "name": "Badges",
+    "alias": "badges",
+    "description": "",
+    "keywords": [],
+    "priority": 0,
+    "providers": [
+        "Modules\\Badges\\app\\Providers\\BadgesServiceProvider"
+    ],
+    "files": []
+}

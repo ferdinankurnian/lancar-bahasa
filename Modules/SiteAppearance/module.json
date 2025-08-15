@@ -1,0 +1,11 @@
+{
+    "name": "SiteAppearance",
+    "alias": "siteappearance",
+    "description": "",
+    "keywords": [],
+    "priority": 0,
+    "providers": [
+        "Modules\\SiteAppearance\\app\\Providers\\SiteAppearanceServiceProvider"
+    ],
+    "files": []
+}

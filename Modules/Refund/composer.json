@@ -1,0 +1,31 @@
+{
+    "name": "nwidart/refund",
+    "description": "",
+    "authors": [
+        {
+            "name": "Nicolas Widart",
+            "email": "n.widart@gmail.com"
+        }
+    ],
+    "extra": {
+        "laravel": {
+            "providers": [],
+            "aliases": {
+
+            }
+        }
+    },
+    "autoload": {
+        "psr-4": {
+            "Modules\\Refund\\": "",
+            "Modules\\Refund\\App\\": "app/",
+            "Modules\\Refund\\Database\\Factories\\": "database/factories/",
+            "Modules\\Refund\\Database\\Seeders\\": "database/seeders/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Modules\\Refund\\Tests\\": "tests/"
+        }
+    }
+}

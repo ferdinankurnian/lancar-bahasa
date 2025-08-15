@@ -1,0 +1,163 @@
+<?php
+
+namespace Modules\Badges\database\seeders;
+
+use Illuminate\Database\Seeder;
+
+class BadgeSeeder extends Seeder
+{
+    /**
+     * Run the database seeds.
+     */
+    public function run(): void
+    {
+        $badges = array(
+            array(
+                "id" => 1,
+                "key" => "registration_badge_one",
+                "image" => "uploads/custom-images/wsus-img-2024-06-05-08-13-59-9888.png",
+                "name" => "Badge 1",
+                "description" => NULL,
+                "condition_from" => 1,
+                "condition_to" => 2,
+                "status" => 1,
+                "created_at" => "2024-06-05 08:13:58",
+                "updated_at" => "2024-06-05 08:13:59",
+            ),
+            array(
+                "id" => 2,
+                "key" => "registration_badge_two",
+                "image" => "uploads/custom-images/wsus-img-2024-06-05-08-14-23-4795.png",
+                "name" => "badge 2",
+                "description" => NULL,
+                "condition_from" => 3,
+                "condition_to" => 4,
+                "status" => 1,
+                "created_at" => "2024-06-05 08:14:23",
+                "updated_at" => "2024-06-05 08:14:23",
+            ),
+            array(
+                "id" => 3,
+                "key" => "registration_badge_three",
+                "image" => "uploads/custom-images/wsus-img-2024-06-05-08-14-55-9047.png",
+                "name" => "Badge 3",
+                "description" => NULL,
+                "condition_from" => 5,
+                "condition_to" => 6,
+                "status" => 1,
+                "created_at" => "2024-06-05 08:14:55",
+                "updated_at" => "2024-06-05 08:14:55",
+            ),
+            array(
+                "id" => 4,
+                "key" => "course_count_badge_one",
+                "image" => "uploads/custom-images/wsus-img-2024-06-05-08-15-33-5592.png",
+                "name" => "Badge 1",
+                "description" => NULL,
+                "condition_from" => 1,
+                "condition_to" => 2,
+                "status" => 1,
+                "created_at" => "2024-06-05 08:15:33",
+                "updated_at" => "2024-06-05 08:15:33",
+            ),
+            array(
+                "id" => 5,
+                "key" => "course_count_badge_two",
+                "image" => "uploads/custom-images/wsus-img-2024-06-05-08-16-01-1865.png",
+                "name" => "Badge 2",
+                "description" => NULL,
+                "condition_from" => 3,
+                "condition_to" => 4,
+                "status" => 1,
+                "created_at" => "2024-06-05 08:16:01",
+                "updated_at" => "2024-06-05 08:16:01",
+            ),
+            array(
+                "id" => 6,
+                "key" => "course_count_badge_three",
+                "image" => "uploads/custom-images/wsus-img-2024-06-05-08-16-24-6251.png",
+                "name" => "Badge 3",
+                "description" => NULL,
+                "condition_from" => 4,
+                "condition_to" => 5,
+                "status" => 1,
+                "created_at" => "2024-06-05 08:16:24",
+                "updated_at" => "2024-06-05 08:16:24",
+            ),
+            array(
+                "id" => 7,
+                "key" => "course_rating_badge_one",
+                "image" => "uploads/custom-images/wsus-img-2024-06-05-08-16-57-4076.png",
+                "name" => "Badge 1",
+                "description" => NULL,
+                "condition_from" => 0,
+                "condition_to" => 1,
+                "status" => 1,
+                "created_at" => "2024-06-05 08:16:57",
+                "updated_at" => "2024-06-05 08:18:18",
+            ),
+            array(
+                "id" => 8,
+                "key" => "course_rating_badge_two",
+                "image" => "uploads/custom-images/wsus-img-2024-06-05-08-17-26-1574.png",
+                "name" => "Badge 2",
+                "description" => NULL,
+                "condition_from" => 2,
+                "condition_to" => 3,
+                "status" => 1,
+                "created_at" => "2024-06-05 08:17:26",
+                "updated_at" => "2024-06-05 08:18:28",
+            ),
+            array(
+                "id" => 9,
+                "key" => "course_rating_badge_three",
+                "image" => "uploads/custom-images/wsus-img-2024-06-05-08-18-48-6887.png",
+                "name" => "Badge 3",
+                "description" => NULL,
+                "condition_from" => 4,
+                "condition_to" => 5,
+                "status" => 1,
+                "created_at" => "2024-06-05 08:17:52",
+                "updated_at" => "2024-06-05 08:18:48",
+            ),
+            array(
+                "id" => 10,
+                "key" => "course_enroll_badge_one",
+                "image" => "uploads/custom-images/wsus-img-2024-06-05-08-19-08-6764.png",
+                "name" => "Badge 1",
+                "description" => NULL,
+                "condition_from" => 1,
+                "condition_to" => 2,
+                "status" => 1,
+                "created_at" => "2024-06-05 08:19:08",
+                "updated_at" => "2024-06-05 08:19:08",
+            ),
+            array(
+                "id" => 11,
+                "key" => "course_enroll_badge_two",
+                "image" => "uploads/custom-images/wsus-img-2024-06-05-08-19-24-6958.png",
+                "name" => "Badge 2",
+                "description" => NULL,
+                "condition_from" => 2,
+                "condition_to" => 3,
+                "status" => 1,
+                "created_at" => "2024-06-05 08:19:24",
+                "updated_at" => "2024-06-05 08:19:24",
+            ),
+            array(
+                "id" => 12,
+                "key" => "course_enroll_badge_three",
+                "image" => "uploads/custom-images/wsus-img-2024-06-05-08-19-52-2846.png",
+                "name" => "Badge 3",
+                "description" => NULL,
+                "condition_from" => 4,
+                "condition_to" => 5,
+                "status" => 1,
+                "created_at" => "2024-06-05 08:19:52",
+                "updated_at" => "2024-06-05 08:19:52",
+            ),
+        );
+    
+        \DB::table('badges')->insert($badges);
+    }
+}

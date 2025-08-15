@@ -1,0 +1,11 @@
+{
+    "name": "InstructorRequest",
+    "alias": "instructorrequest",
+    "description": "",
+    "keywords": [],
+    "priority": 0,
+    "providers": [
+        "Modules\\InstructorRequest\\app\\Providers\\InstructorRequestServiceProvider"
+    ],
+    "files": []
+}

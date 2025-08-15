@@ -1,0 +1,11 @@
+{
+    "name": "FooterSetting",
+    "alias": "footersetting",
+    "description": "",
+    "keywords": [],
+    "priority": 0,
+    "providers": [
+        "Modules\\FooterSetting\\app\\Providers\\FooterSettingServiceProvider"
+    ],
+    "files": []
+}

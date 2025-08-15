@@ -1,0 +1,11 @@
+{
+    "name": "Refund",
+    "alias": "refund",
+    "description": "",
+    "keywords": [],
+    "priority": 0,
+    "providers": [
+        "Modules\\Refund\\app\\Providers\\RefundServiceProvider"
+    ],
+    "files": []
+}

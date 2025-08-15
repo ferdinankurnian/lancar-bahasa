@@ -1,0 +1,11 @@
+{
+    "name": "BasicPayment",
+    "alias": "basicpayment",
+    "description": "",
+    "keywords": [],
+    "priority": 0,
+    "providers": [
+        "Modules\\BasicPayment\\app\\Providers\\BasicPaymentServiceProvider"
+    ],
+    "files": []
+}

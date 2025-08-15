@@ -1,0 +1,31 @@
+{
+    "name": "nwidart/newsletter",
+    "description": "",
+    "authors": [
+        {
+            "name": "Nicolas Widart",
+            "email": "n.widart@gmail.com"
+        }
+    ],
+    "extra": {
+        "laravel": {
+            "providers": [],
+            "aliases": {
+
+            }
+        }
+    },
+    "autoload": {
+        "psr-4": {
+            "Modules\\NewsLetter\\": "",
+            "Modules\\NewsLetter\\App\\": "app/",
+            "Modules\\NewsLetter\\Database\\Factories\\": "database/factories/",
+            "Modules\\NewsLetter\\Database\\Seeders\\": "database/seeders/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Modules\\NewsLetter\\Tests\\": "tests/"
+        }
+    }
+}

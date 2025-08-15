@@ -1,0 +1,31 @@
+{
+    "name": "nwidart/midtrans",
+    "description": "",
+    "authors": [
+        {
+            "name": "Nicolas Widart",
+            "email": "n.widart@gmail.com"
+        }
+    ],
+    "extra": {
+        "laravel": {
+            "providers": [],
+            "aliases": {
+
+            }
+        }
+    },
+    "autoload": {
+        "psr-4": {
+            "Modules\\Midtrans\\": "",
+            "Modules\\Midtrans\\App\\": "app/",
+            "Modules\\Midtrans\\Database\\Factories\\": "database/factories/",
+            "Modules\\Midtrans\\Database\\Seeders\\": "database/seeders/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Modules\\Midtrans\\Tests\\": "tests/"
+        }
+    }
+}
