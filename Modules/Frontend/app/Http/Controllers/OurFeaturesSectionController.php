@@ -28,7 +28,7 @@ class OurFeaturesSectionController extends Controller {
         $languages = allLanguages();
         $ourFeature = Section::getByName('our_features_section');
 
-        return view('frontend::' . DEFAULT_HOMEPAGE . '.our-features-section', compact('languages', 'code', 'ourFeature'));
+        return view('frontend::' . config('app.default_homepage') . '.our-features-section', compact('languages', 'code', 'ourFeature'));
     }
 
     /**

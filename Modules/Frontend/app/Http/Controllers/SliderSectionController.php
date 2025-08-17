@@ -27,13 +27,13 @@ class SliderSectionController extends Controller {
         if (!Language::where('code', $code)->exists()) {
             abort(404);
         }
-        if (DEFAULT_HOMEPAGE != ThemeList::BUSINESS->value) {
+        if (config('app.default_homepage') != ThemeList::BUSINESS->value) {
             abort(404);
         }
         $languages = allLanguages();
         $sliderSection = Section::getByName('slider_section');
 
-        return view('frontend::' . DEFAULT_HOMEPAGE . '.slider-section', compact('languages', 'code', 'sliderSection'));
+        return view('frontend::' . config('app.default_homepage') . '.slider-section', compact('languages', 'code', 'sliderSection'));
     }
 
     /**

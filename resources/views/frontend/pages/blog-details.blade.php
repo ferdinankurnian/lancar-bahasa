@@ -1,5 +1,5 @@
 @extends('frontend.layouts.master')
-@section('meta_title', $blog->translation->title . ' || ' . $setting->app_name)
+@section('meta_title', $blog->meta_title ?? ($blog->title . ' | ' . $setting->app_name))
 
 @push('custom_meta')
     <meta name="description" content="{{ $blog->translation->seo_description }}">

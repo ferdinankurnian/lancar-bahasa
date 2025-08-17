@@ -205,6 +205,23 @@
                 'background-position': 'center',
                 'background-repeat': 'no-repeat'
             });
+
+            $.uploadPreview({
+                input_field: "#image-upload-midtrans",
+                preview_box: "#image-preview-midtrans",
+                label_field: "#image-label-midtrans",
+                label_default: "{{ __('Choose Image') }}",
+                label_selected: "{{ __('Change Image') }}",
+                no_label: false,
+                success_callback: null
+            });
+
+            $('#image-preview-midtrans').css({
+                'background-image': 'url({{ asset($midtrans_payment->image ?? '') }})',
+                'background-size': 'contain',
+                'background-position': 'center',
+                'background-repeat': 'no-repeat'
+            });
         });
     </script>
 @endpush

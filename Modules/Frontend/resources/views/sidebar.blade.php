@@ -20,7 +20,7 @@
                 class="fas fa-puzzle-piece"></i><span>{{ __('Sections') }}</span></a>
 
         <ul class="dropdown-menu">
-            @if(DEFAULT_HOMEPAGE != ThemeList::BUSINESS->value)
+            @if(config('app.default_homepage') != ThemeList::BUSINESS->value)
                 <li class="{{ isRoute('admin.hero-section.*', 'active') }}">
                     <a class="nav-link" href="{{ route('admin.hero-section.index', ['code' => 'en']) }}">
                         {{ __('Hero Section') }}

@@ -35,11 +35,13 @@ class PaymentController extends Controller
 
     public function payment()
     {
-
-        /** you can write your project logic here, you can dyanmic payable amount also */
-        $payable_amount = 100;
-
         $user = Auth::guard('web')->user();
+
+        // Calculate payable amount from cart total
+        $cartTotal = Cart::total(); // Assuming Cart::total() returns the total amount
+        Session::put('payable_amount', $cartTotal); // Store payable amount in session
+
+        $payable_amount = $cartTotal; // Use the calculated cart total
 
         $basic_payment = $this->get_basic_payment_info();
         $payment_setting = $this->get_payment_gateway_info();
@@ -105,7 +107,7 @@ class PaymentController extends Controller
 
         return view('payment')->with([
             'user' => $user,
-            'payable_amount' => $payable_amount,
+            'payable_amount' => $payable_amount, // Pass the calculated payable amount to the view
             'basic_payment' => $basic_payment,
             'payment_setting' => $payment_setting,
             'razorpay_credentials' => $razorpay_credentials,
@@ -476,103 +478,16 @@ class PaymentController extends Controller
         $paymentDetails = Session::get('payment_details');
         $gateway_charge = Session::get('gateway_charge_in_usd');
 
-        if (in_array($gateway_name, ['Razorpay', 'Stripe'])) {
-            $allCurrencyCodes = BasicPaymentSupportedCurrenyListEnum::getStripeSupportedCurrencies();
-
-            if (in_array(Str::upper($payable_currency), $allCurrencyCodes['non_zero_currency_codes'])) {
-                $paid_amount = $paid_amount;
-            } elseif (in_array(Str::upper($payable_currency), $allCurrencyCodes['three_digit_currency_codes'])) {
-                $paid_amount = (int) rtrim(strval($paid_amount), '0');
-            } else {
-                $paid_amount = floatval($paid_amount / 100);
-            }
-        }
-
-        $user = userAuth();
-
-        $order = Order::create([
-            'invoice_id' => Str::random(10),
-            'buyer_id' => $user->id,
-            'status' => 'completed',
-            'has_coupon' => Session::has('coupon_code') ? 1 : 0,
-            'coupon_code' => Session::get('coupon_code'),
-            'coupon_discount_percent' => Session::get('offer_percentage'),
-            'coupon_discount_amount' => Session::get('coupon_discount_amount'),
-            'payment_method' => $gateway_name,
-            'payment_status' => 'paid',
-            'payable_amount' => $payable_amount,
-            'gateway_charge' => $gateway_charge,
-            'payable_with_charge' => $payable_with_charge,
-            'paid_amount' => $paid_amount,
-            'payable_currency' => $payable_currency,
-            'conversion_rate' => Session::get('currency_rate', 1),
-            'payment_details' => json_encode($paymentDetails),
-            'transaction_id' => $transaction,
-            'commission_rate' => Cache::get('setting')->commission_rate,
-        ]);
-
-        $data_layer_order_items = [];
-
-        foreach (Cart::content() as $item) {
-            $order_item = [
-                'order_id' => $order->id,
-                'price' => $item->price,
-                'course_id' => $item->id,
-                'commission_rate' => Cache::get('setting')->commission_rate,
-            ];
-            OrderItem::create([
-                'order_id' => $order->id,
-                'price' => $item->price,
-                'course_id' => $item->id,
-                'commission_rate' => Cache::get('setting')->commission_rate,
-            ]);
-            $data_layer_order_items[] = [
-                'course_name' => $item->name,
-                'price' => currency($item->price),
-                'url' => route('course.show', $item->options->slug),
-            ];
-            Enrollment::create([
-                'order_id' => $order->id,
-                'user_id' => $user->id,
-                'course_id' => $item->id,
-                'has_access' => 1,
-            ]);
-
-            // insert instructor commission to his wallet
-            $commissionAmount = $item->price * ($order->commission_rate / 100);
-            $amountAfterCommission = $item->price - $commissionAmount;  
-            $instructor = Course::find($item->id)->instructor;
-            $instructor->increment('wallet_balance', $amountAfterCommission);
-            
-        }
-        $settings = cache()->get('setting');
-        $marketingSettings = cache()->get('marketing_setting');
-        if ($user && $settings->google_tagmanager_status == 'active' && $marketingSettings->order_success) {
-            $order_success = [
-                'invoice_id' => $order->invoice_id,
-                'transaction_id' => $order->transaction_id,
-                'payment_method' => $order->payment_method,
-                'payable_currency' => $order->payable_currency,
-                'paid_amount' => $order->paid_amount,
-                'payment_status' => $order->payment_status,
-                'order_items' => $data_layer_order_items,
-                'student_info' => [
-                    'name' => $user->name,
-                    'email' => $user->email,
-                ],
-            ];
-            session()->put('enrollSuccess', $order_success);
-        }
-
-        // send mail
-
-        $this->handleMailSending([
-            'email' => $user->email,
-            'name' => $user->name,
-            'order_id' => $order->invoice_id,
-            'paid_amount' => $order->paid_amount. ' '.$order->payable_currency,
-            'payment_method' => $order->payment_method
-        ]);
+        $this->_processSuccessfulPayment(
+            $payable_amount,
+            $payable_with_charge,
+            $payable_currency,
+            $gateway_name,
+            $transaction,
+            $paid_amount,
+            $paymentDetails,
+            $gateway_charge
+        );
 
         Session::forget([
             'after_success_url',
@@ -598,6 +513,61 @@ class PaymentController extends Controller
         $notification = ['messege' => $notification, 'alert-type' => 'success'];
 
         return redirect()->route('order-success')->with($notification);
+    }
+
+    private function _processSuccessfulPayment(
+        Order $order, // Changed signature to accept Order object
+        $gateway_name,
+        $transaction,
+        $paymentDetails
+    ) {
+        $user = userAuth(); // User is already associated with the order
+
+        // Ensure order status is completed and paid
+        $order->payment_status = 'paid';
+        $order->status = 'completed';
+        $order->save();
+
+        // OrderItems, Enrollments, and Cart::destroy() are now handled in MidtransController::createTransaction
+
+        $settings = cache()->get('setting');
+        $marketingSettings = cache()->get('marketing_setting');
+        if ($user && $settings->google_tagmanager_status == 'active' && $marketingSettings->order_success) {
+            // Populate data_layer_order_items from $order->orderItems relationship
+            $data_layer_order_items = [];
+            foreach ($order->orderItems as $item) {
+                $data_layer_order_items[] = [
+                    'course_name' => $item->course->title ?? 'N/A', // Assuming Course model has title
+                    'price' => currency($item->price),
+                    'url' => route('course.show', $item->course->slug ?? 'N/A'), // Assuming Course model has slug
+                ];
+            }
+
+            $order_success = [
+                'invoice_id' => $order->invoice_id,
+                'transaction_id' => $order->transaction_id,
+                'payment_method' => $order->payment_method,
+                'payable_currency' => $order->payable_currency,
+                'paid_amount' => $order->paid_amount,
+                'payment_status' => $order->payment_status,
+                'order_items' => $data_layer_order_items,
+                'student_info' => [
+                    'name' => $user->name,
+                    'email' => $user->email,
+                ],
+            ];
+            session()->put('enrollSuccess', $order_success);
+        }
+
+        // send mail
+
+        $this->handleMailSending([
+            'email' => $user->email,
+            'name' => $user->name,
+            'order_id' => $order->invoice_id,
+            'paid_amount' => $order->paid_amount. ' '.$order->payable_currency,
+            'payment_method' => $order->payment_method
+        ]);
     }
 
     public function payment_addon_faild()

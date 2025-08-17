@@ -3,17 +3,22 @@
 use Illuminate\Support\Facades\Route;
 use Modules\Midtrans\app\Http\Controllers\MidtransController;
 
-/*
-|--------------------------------------------------------------------------
-| Web Routes
-|--------------------------------------------------------------------------
-|
-| Here is where you can register web routes for your application. These
-| routes are loaded by the RouteServiceProvider within a group which
-| contains the "web" middleware group. Now create something great!
-|
-*/
-
-Route::group([], function () {
-    Route::resource('midtrans', MidtransController::class)->names('midtrans');
+Route::prefix('admin')->middleware(['auth', 'verified'])->group(function () {
+    Route::get('midtrans', [MidtransController::class, 'index'])->name('admin.midtrans.index');
+    Route::post('midtrans', [MidtransController::class, 'update'])->name('admin.midtrans.update');
 });
+
+// Routes for payment processing
+Route::post('/midtrans/process', [MidtransController::class, 'process'])->name('midtrans.process');
+Route::post('/midtrans/notify', [MidtransController::class, 'notify'])->name('midtrans.notify');
+
+// Redirect routes from Midtrans
+Route::get('/midtrans/finish', [MidtransController::class, 'finish'])->name('midtrans.finish');
+Route::get('/midtrans/unfinish', [MidtransController::class, 'unfinish'])->name('midtrans.unfinish');
+Route::get('/midtrans/error', [MidtransController::class, 'error'])->name('midtrans.error');
+
+// Route for creating Midtrans transaction (Snap Token) - Kept for now, but new flow is preferred
+Route::post('/midtrans/create-transaction', [MidtransController::class, 'createTransaction'])->name('midtrans.create-transaction');
+
+// New route for the dedicated payment page
+Route::get('/midtrans/pay/{order}', [MidtransController::class, 'pay'])->name('midtrans.pay');

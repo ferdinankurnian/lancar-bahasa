@@ -18,7 +18,7 @@ class NewsLetterSectionController extends Controller {
         checkAdminHasPermissionAndThrowException('section.management');
         $newsletter = Section::getByName('newsletter_section');
 
-        return view('frontend::' . DEFAULT_HOMEPAGE . '.newsletter-section', compact('newsletter'));
+        return view('frontend::' . config('app.default_homepage') . '.newsletter-section', compact('newsletter'));
     }
 
     /**

@@ -25,13 +25,13 @@ class CounterSectionController extends Controller {
         if (!Language::where('code', $code)->exists()) {
             abort(404);
         }
-        if(!in_array(DEFAULT_HOMEPAGE,[ThemeList::MAIN->value, ThemeList::ONLINE->value, ThemeList::UNIVERSITY->value, ThemeList::LANGUAGE->value])){
+        if(!in_array(config('app.default_homepage'),[ThemeList::MAIN->value, ThemeList::ONLINE->value, ThemeList::UNIVERSITY->value, ThemeList::LANGUAGE->value])){
             abort(404);
         }
         $languages = allLanguages();
         $counter = Section::getByName('counter_section');
 
-        return view('frontend::' . DEFAULT_HOMEPAGE . '.counter-section', compact('languages', 'code', 'counter'));
+        return view('frontend::' . config('app.default_homepage') . '.counter-section', compact('languages', 'code', 'counter'));
     }
 
     /**
@@ -46,12 +46,12 @@ class CounterSectionController extends Controller {
 
         $section->update(['global_content' => $global_content]);
 
-        if (DEFAULT_HOMEPAGE != ThemeList::MAIN->value) {
+        if (config('app.default_homepage') != ThemeList::MAIN->value) {
             // Update translated content
             $content = $this->updateSectionContent($section?->content, $request, ['title', 'description', 'button_text']);
             $translation = SectionTranslation::where('section_id', $section->id)->exists();
 
-            if (!$translation && DEFAULT_HOMEPAGE != ThemeList::BUSINESS->value) {
+            if (!$translation && config('app.default_homepage') != ThemeList::BUSINESS->value) {
                 $this->generateTranslations(TranslationModels::Section, $section, 'section_id', $request);
             }
 

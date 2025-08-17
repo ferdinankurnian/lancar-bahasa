@@ -249,7 +249,9 @@ Route::group(['middleware' => 'maintenance.mode'], function () {
 
     Route::group(['middleware' => ['auth', 'verified']], function () {
         /** checkout routes */
+        Route::get('checkout/pay/{order}', [CheckOutController::class, 'payWithMidtrans'])->name('checkout.pay');
         Route::get('checkout', [CheckOutController::class, 'index'])->name('checkout.index');
+        Route::get('order/completed/{order}', [CheckOutController::class, 'orderCompleted'])->name('order.completed');
 
         /**payment related route start */
         Route::get('payment', [PaymentController::class, 'payment'])->name('payment');
@@ -286,3 +288,7 @@ Route::get('/maintenance-mode', function () {
 require __DIR__ . '/auth.php';
 
 require __DIR__ . '/admin.php';
+
+Route::get('/test-route', function () {
+    return 'Test route is working!';
+})->name('test.route');

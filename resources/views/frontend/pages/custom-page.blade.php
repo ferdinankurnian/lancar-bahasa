@@ -1,5 +1,5 @@
 @extends('frontend.layouts.master')
-@section('meta_title', $page->translation->name. ' || ' . $setting->app_name)
+@section('meta_title', $page->meta_title ?? ($page->title . ' | ' . $setting->app_name))
 @section('contents')
     <!-- breadcrumb-area -->
     <x-frontend.breadcrumb :title="$page->translation->name" :links="[['url' => route('home'), 'text' => __('Home')], ['url' => '', 'text' => $page->translation->name]]" />

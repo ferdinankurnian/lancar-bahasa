@@ -1,5 +1,5 @@
 @extends('frontend.layouts.master')
-@section('meta_title', $course->title . ' || ' . $setting->app_name)
+@section('meta_title', $course->meta_title ?? ($course->title . ' | ' . $setting->app_name))
 @push('custom_meta')
     <meta property="description" content="{{ $course->seo_description }}" />
     <meta property="og:title" content="{{ $course->title }}" />

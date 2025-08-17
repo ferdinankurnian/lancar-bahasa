@@ -113,8 +113,12 @@
                                         @forelse ($orders as $index => $order)
                                             <tr>
                                                 <td>{{ ++$index }}</td>
-                                                <td><a
-                                                        href="{{ route('admin.customer-show', $order->buyer_id) }}">{{ $order?->user?->name }}</a>
+                                                <td>
+                                                    @if ($order->user)
+                                                        <a href="{{ route('admin.customer-show', $order->buyer_id) }}">{{ $order->user->name }}</a>
+                                                    @else
+                                                        {{ __("N/A") }}
+                                                    @endif
                                                 </td>
                                                 <td>#{{ $order->invoice_id }}</td>
                                                 <td>{{ $order->paid_amount }} {{ $order->payable_currency }}</td>
