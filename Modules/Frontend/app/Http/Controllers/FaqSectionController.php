@@ -28,7 +28,7 @@ class FaqSectionController extends Controller {
         $languages = allLanguages();
         $faqSection = Section::getByName('faq_section');
 
-        return view('frontend::' . DEFAULT_HOMEPAGE . '.faq-section', compact('languages', 'code', 'faqSection'));
+        return view('frontend::' . config('app.default_homepage') . '.faq-section', compact('languages', 'code', 'faqSection'));
     }
     /**
      * Update the specified resource in storage.

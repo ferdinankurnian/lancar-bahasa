@@ -17,7 +17,7 @@ class BannerSectionController extends Controller {
     public function index() {
         checkAdminHasPermissionAndThrowException('section.management');
         $bannerSection = Section::getByName('banner_section');
-        return view('frontend::' . DEFAULT_HOMEPAGE . '.banner-section', compact('bannerSection'));
+        return view('frontend::' . config('app.default_homepage') . '.banner-section', compact('bannerSection'));
     }
     /**
      * Update the specified resource in storage.

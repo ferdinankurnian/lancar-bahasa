@@ -32,7 +32,7 @@ class HeroSectionController extends Controller {
         $languages = allLanguages();
         $heroSection = Section::getByName('hero_section');
 
-        return view('frontend::' . DEFAULT_HOMEPAGE . '.hero-section', compact('languages', 'code', 'heroSection'));
+        return view('frontend::' . config('app.default_homepage') . '.hero-section', compact('languages', 'code', 'heroSection'));
     }
 
     /**

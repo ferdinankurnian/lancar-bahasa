@@ -117,7 +117,7 @@
                                                         href="{{ route('admin.customer-show', $order->buyer_id) }}">{{ $order?->user?->name }}</a>
                                                 </td>
                                                 <td>#{{ $order->invoice_id }}</td>
-                                                <td>{{ $order->paid_amount }} {{ $order->payable_currency }}</td>
+                                                <td>Rp{{ $order->payable_amount }}</td>
                                                 <td>
                                                     {{ $order->payment_method }}
                                                 </td>

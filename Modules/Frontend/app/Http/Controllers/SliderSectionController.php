@@ -33,7 +33,7 @@ class SliderSectionController extends Controller {
         $languages = allLanguages();
         $sliderSection = Section::getByName('slider_section');
 
-        return view('frontend::' . DEFAULT_HOMEPAGE . '.slider-section', compact('languages', 'code', 'sliderSection'));
+        return view('frontend::' . config('app.default_homepage') . '.slider-section', compact('languages', 'code', 'sliderSection'));
     }
 
     /**

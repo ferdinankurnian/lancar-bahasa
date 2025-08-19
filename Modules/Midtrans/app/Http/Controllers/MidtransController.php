@@ -4,10 +4,18 @@ namespace Modules\Midtrans\app\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-use Illuminate\Support\Facades\Cache;
 use Modules\Midtrans\app\Models\MidtransSetting;
 use Midtrans\Config;
 use Midtrans\Snap;
+use App\Models\Course;
+use Modules\Order\app\Models\Order;
+use Modules\Order\app\Models\OrderItem;
+use Gloudemans\Shoppingcart\Facades\Cart;
+use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Cache;
+use App\Http\Controllers\Frontend\CartController;
 
 class MidtransController extends Controller
 {
@@ -54,33 +62,7 @@ class MidtransController extends Controller
         return redirect()->back()->with($notification);
     }
 
-    public function process()
-    {
-        // Payment processing logic will be implemented here
-    }
-
-    public function notify()
-    {
-        // Webhook notification logic will be implemented here
-    }
-
-    public function finish()
-    {
-        // Logic for successful payment redirect
-        return view('midtrans::finish'); // Assuming a finish.blade.php view
-    }
-
-    public function unfinish()
-    {
-        // Logic for uncompleted payment redirect
-        return view('midtrans::unfinish'); // Assuming an unfinish.blade.php view
-    }
-
-    public function error()
-    {
-        // Logic for payment error redirect
-        return view('midtrans::error'); // Assuming an error.blade.php view
-    }
+    
 
     public function createTransaction(Request $request)
     {
@@ -100,33 +82,82 @@ class MidtransController extends Controller
         \Midtrans\Config::$isSanitized = true;
         \Midtrans\Config::$is3ds = true;
 
-        // Prepare transaction details
-        $orderId = 'ORDER-' . uniqid(); // Generate a unique order ID
-        $grossAmount = $request->input('payable_amount'); // Amount from frontend
+        $user = Auth::user();
 
-        $customerDetails = [
-            'first_name' => $request->input('user_name') ?? 'Guest',
-            'email' => $request->input('user_email') ?? 'guest@example.com',
-        ];
+        // Get the payable amount from the session, which is calculated in CartController
+        $payable_amount = Session::get('payable_amount', (int) Cart::total(2, '.', ''));
 
-        $itemDetails = [
-            [
-                'id' => 'item-1', // Replace with actual item ID
-                'price' => $grossAmount,
+        // Create a pending order in our database
+        $order = Order::create([
+            'invoice_id' => Str::random(10),
+            'buyer_id' => $user->id,
+            'status' => 'pending', // Set status to pending
+            'has_coupon' => Session::has('coupon_code') ? 1 : 0,
+            'coupon_code' => Session::get('coupon_code'),
+            'coupon_discount_percent' => Session::get('offer_percentage'),
+            'coupon_discount_amount' => Session::get('coupon_discount_amount'),
+            'payment_method' => 'Midtrans',
+            'payment_status' => 'pending',
+            'payable_amount' => $payable_amount,
+            'gateway_charge' => 0, // Adjust if Midtrans has gateway charge
+            'payable_with_charge' => $payable_amount, // Assuming no extra charge for now
+            'paid_amount' => 0, // Will be updated after successful payment
+            'conversion_rate' => 1,
+            'payable_currency' => getSessionCurrency(),
+            'payment_details' => null, // Will be updated after successful payment
+            'transaction_id' => null, // Will be updated after successful payment
+            'commission_rate' => \Cache::get('setting')->commission_rate,
+        ]);
+
+        // Store order_id in session to retrieve it in payment_addon_success
+        Session::put('current_order_id', $order->id);
+
+        $itemDetails = [];
+        foreach (Cart::content() as $item) {
+            OrderItem::create([
+                'order_id' => $order->id,
+                'price' => $item->price,
+                'course_id' => $item->id,
+                'commission_rate' => \Cache::get('setting')->commission_rate,
+            ]);
+            $itemDetails[] = [
+                'id' => $item->id,
+                'price' => $item->price,
+                'quantity' => $item->qty,
+                'name' => $item->name,
+            ];
+        }
+
+        // If a coupon is applied, add it as a separate item with a negative value
+        if (Session::has('coupon_code')) {
+            $itemDetails[] = [
+                'id' => 'COUPON_' . Session::get('coupon_code'),
+                'price' => -(int)Session::get('coupon_discount_amount'),
                 'quantity' => 1,
-                'name' => 'Course/Product Purchase', // Replace with actual item name
-            ]
-        ];
+                'name' => 'Coupon Discount'
+            ];
+        }
 
         $transactionDetails = [
-            'order_id' => $orderId,
-            'gross_amount' => $grossAmount,
+            'order_id' => $order->invoice_id, // Use invoice_id as order_id for Midtrans
+            'gross_amount' => $payable_amount,
+        ];
+
+        $customerDetails = [
+            'first_name' => $user->name ?? 'Guest',
+            'email' => $user->email ?? 'guest@example.com',
         ];
 
         $params = [
             'transaction_details' => $transactionDetails,
             'customer_details' => $customerDetails,
             'item_details' => $itemDetails,
+            'callbacks' => [
+                'finish' => route('midtrans.callback.success'),
+                'unfinish' => route('order-unfinish'),
+                'error' => route('order-fail'),
+            ],
+            'notification_url' => route('midtrans.callback.success'),
         ];
 
         try {
@@ -145,6 +176,6 @@ class MidtransController extends Controller
             $midtrans_payment[$payment_item->key] = $payment_item->value;
         }
         $midtrans_payment = (object) $midtrans_payment;
-        Cache::put('midtrans_payment', $midtrans_payment);
+        \Cache::put('midtrans_payment', $midtrans_payment);
     }
 }

@@ -27,7 +27,7 @@ class OurFeaturesSectionUpdateRequest extends FormRequest {
             'title_four'      => ['sometimes', 'string', 'max:255'],
             'sub_title_four'  => ['sometimes', 'string', 'max:255'],
         ];
-        if (DEFAULT_HOMEPAGE == ThemeList::YOGA->value) {
+        if (config('app.default_homepage') == ThemeList::YOGA->value) {
             $rules['sec_title'] = ['required', 'string', 'max:255'];
             $rules['sec_description'] = ['required', 'string', 'max:255'];
         }

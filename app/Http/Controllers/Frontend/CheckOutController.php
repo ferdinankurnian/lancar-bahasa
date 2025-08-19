@@ -32,8 +32,13 @@ class CheckOutController extends Controller
         $total = currency($cartTotal - $discountAmount);
         $coupon = Session::has('coupon_code') ? Session::get('coupon_code') : '';
 
-        $payable_amount = $cartTotal - $discountAmount;
-        Session::put('payable_amount', $payable_amount);
+        // Variables for Blade logic
+        $has_coupon = Session::has('coupon_code');
+        $payable_amount = $cartTotal; // Price before coupon
+        $cartTotalAfterCoupon = $cartTotal - $discountAmount; // Price after coupon
+
+        // Put the correct final amount in session for the backend controller
+        Session::put('payable_amount', $cartTotalAfterCoupon);
         $user = userAuth();
 
         $basic_payment = $this->get_basic_payment_info();
@@ -109,7 +114,7 @@ class CheckOutController extends Controller
             'client_key' => $midtrans_payment_settings['client_key'] ?? '',
             'is_production' => filter_var($midtrans_payment_settings['is_production'] ?? false, FILTER_VALIDATE_BOOLEAN),
             'status' => $midtrans_payment_settings['status'] ?? '0',
-            'image' => 'uploads/website-images/midtrans.png', // Placeholder image, user can change later
+            'image' => $midtrans_payment_settings['image'], // Placeholder image, user can change later
         ];
         /**end midtrans setting */
 
@@ -125,6 +130,8 @@ class CheckOutController extends Controller
 
             'basic_payment' => $basic_payment,
             'payable_amount' => $payable_amount,
+            'cartTotalAfterCoupon' => $cartTotalAfterCoupon,
+            'has_coupon' => $has_coupon,
             'payment_setting' => $payment_setting,
             'razorpay_credentials' => $razorpay_credentials,
             'mollie_credentials' => $mollie_credentials,

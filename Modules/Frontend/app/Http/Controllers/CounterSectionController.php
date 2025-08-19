@@ -51,7 +51,7 @@ class CounterSectionController extends Controller {
             $content = $this->updateSectionContent($section?->content, $request, ['title', 'description', 'button_text']);
             $translation = SectionTranslation::where('section_id', $section->id)->exists();
 
-            if (!$translation && DEFAULT_HOMEPAGE != ThemeList::BUSINESS->value) {
+            if (!$translation && config('app.default_homepage') != ThemeList::BUSINESS->value) {
                 $this->generateTranslations(TranslationModels::Section, $section, 'section_id', $request);
             }
 

@@ -46,7 +46,8 @@ class Section extends Model {
         return $query->where('status', 0);
     }
 
-    static function getByName(string $section_name, string $theme_name = DEFAULT_HOMEPAGE) {
+    static function getByName(string $section_name, string $theme_name = null) {
+        $theme_name = $theme_name ?? config('app.default_homepage');
         $home = Home::firstOrCreate(['slug' => $theme_name]);
         $section = self::firstOrCreate(['name' => $section_name,'home_id' => $home->id]);
         return $section;

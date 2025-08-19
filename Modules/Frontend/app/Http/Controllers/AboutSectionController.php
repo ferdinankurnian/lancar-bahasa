@@ -28,7 +28,7 @@ class AboutSectionController extends Controller {
         $languages = allLanguages();
         $aboutSection = Section::getByName('about_section');
 
-        return view('frontend::' . DEFAULT_HOMEPAGE . '.about-section', compact('languages', 'code', 'aboutSection'));
+        return view('frontend::' . config('app.default_homepage') . '.about-section', compact('languages', 'code', 'aboutSection'));
     }
     /**
      * Update the specified resource in storage.
