@@ -620,8 +620,8 @@ b.text-highlight {
 }
 
 .logo a img {
-    max-width: 250px;
-    height: 5.2rem;
+    max-width: 125px;
+    height: auto;
 }
 
 .course-section-item .item-action {

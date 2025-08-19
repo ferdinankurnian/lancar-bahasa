@@ -20,29 +20,7 @@
                             <h4>{{ __('filter') }}</h4>
                         </div>
                         <aside class="courses__sidebar">
-                            <div class="courses-widget">
-                                <h4 class="widget-title">{{ __('Categories') }}</h4>
-                                <div class="courses-cat-list">
-                                    <ul class="list-wrap">
-                                        @foreach ($categories->sortBy('translation.name') as $category)
-                                            <li>
-                                                <div class="form-check">
-                                                    <input class="form-check-input main-category-checkbox" type="radio"
-                                                        name="main_category" value="{{ $category->slug }}"
-                                                        id="cat_{{ $category->id }}">
-                                                    <label class="form-check-label"
-                                                        for="cat_{{ $category->id }}">{{ $category->translation->name }}</label>
-                                                </div>
-                                            </li>
-                                        @endforeach
-                                    </ul>
-                                    <div class="show-more">
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="sub-category-holder "></div>
-                            <div class="courses-widget">
+                        <div class="courses-widget">
                                 <h4 class="widget-title">{{ __('Language') }}</h4>
                                 <div class="courses-cat-list">
                                     <ul class="list-wrap">
@@ -69,6 +47,29 @@
                                     </ul>
                                 </div>
                                 <div class="show-more">
+                                </div>
+                            </div>
+
+                            <div class="sub-category-holder "></div>
+                            
+                            <div class="courses-widget">
+                                <h4 class="widget-title">{{ __('Categories') }}</h4>
+                                <div class="courses-cat-list">
+                                    <ul class="list-wrap">
+                                        @foreach ($categories->sortBy('translation.name') as $category)
+                                            <li>
+                                                <div class="form-check">
+                                                    <input class="form-check-input main-category-checkbox" type="radio"
+                                                        name="main_category" value="{{ $category->slug }}"
+                                                        id="cat_{{ $category->id }}">
+                                                    <label class="form-check-label"
+                                                        for="cat_{{ $category->id }}">{{ $category->translation->name }}</label>
+                                                </div>
+                                            </li>
+                                        @endforeach
+                                    </ul>
+                                    <div class="show-more">
+                                    </div>
                                 </div>
                             </div>
                             <div class="courses-widget">
