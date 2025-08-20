@@ -35,12 +35,6 @@
         <!-- course-area-end -->
     @endif
 
-    @if ($sectionSetting?->news_letter_section)
-        <!-- newsletter-area -->
-        @include('frontend.home.main.sections.newsletter-area')
-        <!-- newsletter-area-end -->
-    @endif
-
     @if ($sectionSetting?->featured_instructor_section)
         <!-- instructor-area -->
         @include('frontend.home.main.sections.instructor-area')
@@ -74,5 +68,11 @@
         <!-- blog-area -->
         @include('frontend.home.main.sections.blog-area')
         <!-- blog-area-end -->
+    @endif
+
+    @if ($sectionSetting?->news_letter_section)
+        <!-- newsletter-area -->
+        @include('frontend.home.main.sections.newsletter-area')
+        <!-- newsletter-area-end -->
     @endif
 @endsection

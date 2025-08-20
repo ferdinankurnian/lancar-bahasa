@@ -35,12 +35,14 @@
 
                     {!! clean(processText($aboutSection?->content?->description)) !!}
 
-                    <div class="tg-button-wrap">
-                        <a href="{{ $aboutSection?->global_content?->button_url }}"
-                            class="btn arrow-btn">{{ $aboutSection?->content?->button_text }} <img
-                                src="{{ asset('frontend/img/icons/right_arrow.svg') }}" alt="img"
-                                class="injectable"></a>
-                    </div>
+                    @if ($aboutSection?->global_content?->button_url != null)
+                        <div class="tg-button-wrap">
+                            <a href="{{ $aboutSection?->global_content?->button_url }}"
+                                class="btn arrow-btn">{{ $aboutSection?->content?->button_text }} <img
+                                    src="{{ asset('frontend/img/icons/right_arrow.svg') }}" alt="img"
+                                    class="injectable"></a>
+                        </div>
+                    @endif
                 </div>
             </div>
         </div>

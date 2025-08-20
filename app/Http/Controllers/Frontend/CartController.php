@@ -162,17 +162,29 @@ class CartController extends Controller {
             return response()->json(['message' => $notification], 403);
         }
 
-        $discountAmount = currency(($this->cartTotal() * $coupon->offer_percentage) / 100);
-        $total = currency($this->cartTotal() - ($this->cartTotal() * $coupon->offer_percentage) / 100);
+        $totalCouponDiscountAmount = 0;
+        foreach (Cart::content() as $item) {
+            $itemPrice = $item->price;
+            $discountPerItem = ($itemPrice * $coupon->offer_percentage) / 100;
+            $totalCouponDiscountAmount += $discountPerItem;
+        }
 
-        /** when coupon will be handle for particular seller or author , above condition will be used  */
         Session::put('coupon_code', $coupon->coupon_code);
         Session::put('offer_percentage', $coupon->offer_percentage);
-        Session::put('coupon_discount_amount', ($this->cartTotal() * $coupon->offer_percentage) / 100);
+        Session::put('coupon_discount_amount', $totalCouponDiscountAmount);
 
         $notification = __('Coupon applied successful');
 
-        return response()->json(['message' => $notification, 'coupon_code' => $coupon->coupon_code, 'offer_percentage' => $coupon->offer_percentage, 'discount_amount' => $discountAmount, 'total' => $total]);
+        $cartTotalAfterCoupon = $this->cartTotal() - $totalCouponDiscountAmount;
+        Session::put('payable_amount', $cartTotalAfterCoupon);
+
+        return response()->json([
+            'message' => $notification,
+            'coupon_code' => $coupon->coupon_code,
+            'offer_percentage' => $coupon->offer_percentage,
+            'discount_amount' => currency($totalCouponDiscountAmount),
+            'total' => currency($cartTotalAfterCoupon)
+        ]);
     }
 
     function updateCouponDiscountAmount() {
@@ -181,8 +193,13 @@ class CartController extends Controller {
         }
 
         $coupon = Coupon::where(['coupon_code' => Session::get('coupon_code'), 'status' => 'active'])->first();
-        // update discount amount
-        Session::put('coupon_discount_amount', ($this->cartTotal() * $coupon->offer_percentage) / 100);
+        $totalCouponDiscountAmount = 0;
+        foreach (Cart::content() as $item) {
+            $itemPrice = $item->price;
+            $discountPerItem = ($itemPrice * $coupon->offer_percentage) / 100;
+            $totalCouponDiscountAmount += $discountPerItem;
+        }
+        Session::put('coupon_discount_amount', $totalCouponDiscountAmount);
     }
 
     function removeCoupon() {

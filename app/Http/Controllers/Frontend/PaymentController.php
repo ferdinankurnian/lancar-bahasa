@@ -15,6 +15,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Facades\Log;
 use Modules\BasicPayment\app\Enums\BasicPaymentSupportedCurrenyListEnum;
 use Modules\BasicPayment\app\Http\Controllers\FrontPaymentController;
 use Modules\ClubPoint\app\Models\ClubPointHistory;
@@ -33,442 +34,10 @@ class PaymentController extends Controller
 {
     use GetGlobalInformationTrait, MailSenderTrait;
 
-    public function payment()
-    {
-        $user = Auth::guard('web')->user();
-
-        // Calculate payable amount from cart total
-        $cartTotal = Cart::total(); // Assuming Cart::total() returns the total amount
-        Session::put('payable_amount', $cartTotal); // Store payable amount in session
-
-        $payable_amount = $cartTotal; // Use the calculated cart total
-
-        $basic_payment = $this->get_basic_payment_info();
-        $payment_setting = $this->get_payment_gateway_info();
-
-        $flutterwave_currency = MultiCurrency::where('id', $payment_setting->flutterwave_currency_id)->first();
-        $paystack_currency = MultiCurrency::where('id', $payment_setting->paystack_currency_id)->first();
-
-        /**start razorpay setting */
-        $razorpay_calculate_charge = $this->calculate_payable_charge($payable_amount, 'razorpay');
-
-        $razorpay_credentials = (object) [
-            'currency_code' => $razorpay_calculate_charge->currency_code,
-            'payable_with_charge' => $razorpay_calculate_charge->payable_with_charge,
-            'razorpay_key' => $payment_setting->razorpay_key,
-            'razorpay_secret' => $payment_setting->razorpay_secret,
-            'razorpay_name' => $payment_setting->razorpay_name,
-            'razorpay_description' => $payment_setting->razorpay_description,
-            'razorpay_image' => $payment_setting->razorpay_image,
-            'razorpay_theme_color' => $payment_setting->razorpay_theme_color,
-            'razorpay_status' => $payment_setting->razorpay_status,
-        ];
-        /**end razorpay setting */
-
-        /**start mollie setting */
-        $mollie_credentials = (object) [
-            'mollie_status' => $payment_setting->mollie_status,
-        ];
-        /**end mollie setting */
-
-        /**start instamojo setting */
-        $instamojo_credentials = (object) [
-            'instamojo_status' => $payment_setting->instamojo_status,
-        ];
-        /**end instamojo setting */
-
-        /**start flutterwave setting */
-        $flutterwave_calculate_charge = $this->calculate_payable_charge($payable_amount, 'flutterwave');
-
-        $flutterwave_credentials = (object) [
-            'country_code' => $flutterwave_calculate_charge->country_code,
-            'currency_code' => $flutterwave_calculate_charge->currency_code,
-            'payable_with_charge' => $flutterwave_calculate_charge->payable_with_charge,
-            'flutterwave_public_key' => $payment_setting->flutterwave_public_key,
-            'flutterwave_secret_key' => $payment_setting->flutterwave_secret_key,
-            'flutterwave_app_name' => $payment_setting->flutterwave_app_name,
-            'flutterwave_status' => $payment_setting->flutterwave_status,
-            'flutterwave_image' => $payment_setting->flutterwave_image,
-        ];
-        /**end flutterwave setting */
-
-        /**start paystack setting */
-        $paystack_calculate_charge = $this->calculate_payable_charge($payable_amount, 'paystack');
-
-        $paystack_credentials = (object) [
-            'country_code' => $paystack_calculate_charge->country_code,
-            'currency_code' => $paystack_calculate_charge->currency_code,
-            'payable_with_charge' => $paystack_calculate_charge->payable_with_charge,
-            'paystack_public_key' => $payment_setting->paystack_public_key,
-            'paystack_secret_key' => $payment_setting->paystack_secret_key,
-            'paystack_status' => $payment_setting->paystack_status,
-        ];
-        /**end paystack setting */
-
-        return view('payment')->with([
-            'user' => $user,
-            'payable_amount' => $payable_amount, // Pass the calculated payable amount to the view
-            'basic_payment' => $basic_payment,
-            'payment_setting' => $payment_setting,
-            'razorpay_credentials' => $razorpay_credentials,
-            'mollie_credentials' => $mollie_credentials,
-            'instamojo_credentials' => $instamojo_credentials,
-            'flutterwave_credentials' => $flutterwave_credentials,
-            'paystack_credentials' => $paystack_credentials,
-        ]);
-    }
-
-    public function pay_via_stripe(Request $request)
-    {
-        if (!BasicPaymentSupportedCurrenyListEnum::isStripeSupportedCurrencies(getSessionCurrency())) {
-            session()->flash('show_stripe_currency');
-
-            $notification = trans('You are trying to use unsupported currency');
-            $notification = ['messege' => $notification, 'alert-type' => 'warning'];
-
-            return back()->with($notification);
-        }
-
-        $basic_payment = $this->get_basic_payment_info();
-
-        $payable_amount = Session::get('payable_amount');
-
-        $after_success_url = route('payment-addon-success');
-        $after_faild_url = route('payment-addon-faild');
-
-        $user = userAuth();
-
-        $stripe_credentials = (object) [
-            'stripe_key' => $basic_payment->stripe_key,
-            'stripe_secret' => $basic_payment->stripe_secret,
-        ];
-
-        $stripe_payment = new FrontPaymentController();
-
-        return $stripe_payment->pay_with_stripe($request, $stripe_credentials, $payable_amount, $after_success_url, $after_faild_url, $user);
-    }
-
-    public function pay_via_paypal()
-    {
-        if (!BasicPaymentSupportedCurrenyListEnum::isPaypalSupportedCurrencies(getSessionCurrency())) {
-            session()->flash('show_paypal_currency');
-
-            $notification = trans('You are trying to use unsupported currency');
-            $notification = ['messege' => $notification, 'alert-type' => 'warning'];
-
-            return back()->with($notification);
-        }
-
-        $basic_payment = $this->get_basic_payment_info();
-
-        $payable_amount = Session::get('payable_amount');
-
-        $after_success_url = route('payment-addon-success');
-        $after_faild_url = route('payment-addon-faild');
-
-        $user = userAuth();
-
-        $paypal_credentials = (object) [
-            'paypal_client_id' => $basic_payment->paypal_client_id,
-            'paypal_secret_key' => $basic_payment->paypal_secret_key,
-            'paypal_account_mode' => $basic_payment->paypal_account_mode,
-            'paypal_app_id' => $basic_payment->paypal_app_id,
-        ];
-
-        $paypal_payment = new FrontPaymentController();
-
-        return $paypal_payment->pay_with_paypal($paypal_credentials, $payable_amount, $after_success_url, $after_faild_url, $user);
-    }
-
-
-
-    public function pay_via_razorpay(Request $request)
-    {
-        if (!PaymentGatewaySupportedCurrenyListEnum::isRazorpaySupportedCurrencies(getSessionCurrency())) {
-            session()->flash('show_razorpay_currency');
-
-            $notification = trans('You are trying to use unsupported currency');
-            $notification = ['messege' => $notification, 'alert-type' => 'warning'];
-
-            return back()->with($notification);
-        }
-
-        $payment_setting = $this->get_payment_gateway_info();
-
-        $after_success_url = route('payment-addon-success');
-        $after_faild_url = route('payment-addon-faild');
-
-        $user = userAuth();
-
-        $razorpay_credentials = (object) [
-            'razorpay_key' => $payment_setting->razorpay_key,
-            'razorpay_secret' => $payment_setting->razorpay_secret,
-        ];
-
-        $razorpay_payment = new AddonPaymentController();
-
-        return $razorpay_payment->pay_with_razorpay($request, $razorpay_credentials, $request->payable_amount, $after_success_url, $after_faild_url, $user);
-    }
-
-    public function pay_via_mollie(Request $request)
-    {
-        if (!PaymentGatewaySupportedCurrenyListEnum::isMollieSupportedCurrencies(getSessionCurrency())) {
-            session()->flash('show_mollie_currency');
-
-            $notification = trans('You are trying to use unsupported currency');
-            $notification = ['messege' => $notification, 'alert-type' => 'warning'];
-
-            return back()->with($notification);
-        }
-
-        $payable_amount = Session::get('payable_amount');
-        Session::put('payable_with_charge', $this->calculate_payable_charge($request->payable_amount, 'mollie')->payable_with_charge);
-
-        $after_success_url = route('payment-addon-success');
-        $after_faild_url = route('payment-addon-faild');
-
-        $user = userAuth();
-
-        $payment_setting = $this->get_payment_gateway_info();
-
-        $mollie_credentials = (object) [
-            'mollie_key' => $payment_setting->mollie_key,
-        ];
-
-        $mollie_payment = new AddonPaymentController();
-
-        return $mollie_payment->pay_with_mollie($mollie_credentials, $payable_amount, $after_success_url, $after_faild_url, $user);
-    }
-
-    public function pay_via_instamojo()
-    {
-        if (!PaymentGatewaySupportedCurrenyListEnum::isInstamojoSupportedCurrencies(getSessionCurrency())) {
-            session()->flash('show_instamojo_currency');
-
-            $notification = trans('You are trying to use unsupported currency');
-            $notification = ['messege' => $notification, 'alert-type' => 'warning'];
-
-            return back()->with($notification);
-        }
-
-        $payable_amount = Session::get('payable_amount');
-
-        $after_success_url = route('payment-addon-success');
-        $after_faild_url = route('payment-addon-faild');
-
-        $user = userAuth();
-
-        $payment_setting = $this->get_payment_gateway_info();
-
-        $instamojo_credentials = (object) [
-            'instamojo_api_key' => $payment_setting->instamojo_api_key,
-            'instamojo_auth_token' => $payment_setting->instamojo_auth_token,
-            'account_mode' => $payment_setting->instamojo_account_mode,
-        ];
-
-        $instamojo_payment = new AddonPaymentController();
-
-        return $instamojo_payment->pay_with_instamojo($instamojo_credentials, $payable_amount, $after_success_url, $after_faild_url, $user);
-    }
-
-    function pay_via_flutterwave(Request $request) {
-        $payment_setting = $this->get_payment_gateway_info();
-        $curl = curl_init();
-        $tnx_id = $request->tnx_id;
-        $url = "https://api.flutterwave.com/v3/transactions/$tnx_id/verify";
-        $token = $payment_setting->flutterwave_secret_key;
-
-        curl_setopt_array($curl, [
-            CURLOPT_URL => $url,
-            CURLOPT_RETURNTRANSFER => true,
-            CURLOPT_ENCODING => '',
-            CURLOPT_MAXREDIRS => 10,
-            CURLOPT_TIMEOUT => 0,
-            CURLOPT_FOLLOWLOCATION => true,
-            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-            CURLOPT_CUSTOMREQUEST => 'GET',
-            CURLOPT_HTTPHEADER => [
-                'Content-Type: application/json',
-                "Authorization: Bearer $token",
-            ],
-        ]);
-
-        $response = curl_exec($curl);
-
-        curl_close($curl);
-        $response = json_decode($response);
-        if ($response->status == 'success') {
-
-            $paymentDetails = [
-                'status' => $response->status,
-                'trx_id' => $tnx_id,
-                'amount' => $response?->data?->amount,
-                'amount_settled' => $response?->data?->amount_settled,
-                'currency' => $response?->data?->currency,
-                'charged_amount' => $response?->data?->charged_amount,
-                'app_fee' => $response?->data?->app_fee,
-                'merchant_fee' => $response?->data?->merchant_fee,
-                'card_last_4digits' => $response?->data?->card?->last_4digits,
-            ];
-
-            Session::put('paid_amount', $response?->data?->amount);
-            Session::put('payable_currency', $response?->data?->currency);
-            Session::put('payment_details', $paymentDetails);
-            Session::put('after_success_gateway', 'Flutterwave');
-            Session::put('after_success_transaction', $tnx_id);
-            Session::put('payable_with_charge', $response?->data?->amount);
-
-            return response()->json(['message' => 'payment success']);
-        } else {
-            $notification = trans('Payment Fail');
-
-            return response()->json(['message' => $notification], 403);
-        } 
-    }
-
-    function pay_via_paystack(Request $request) {
-        
-        $reference = $request->reference;
-        $transaction = $request->tnx_id;
-        $secret_key = $request->secret_key;
-        $curl = curl_init();
-        curl_setopt_array($curl, [
-            CURLOPT_URL => "https://api.paystack.co/transaction/verify/$reference",
-            CURLOPT_RETURNTRANSFER => true,
-            CURLOPT_ENCODING => '',
-            CURLOPT_MAXREDIRS => 10,
-            CURLOPT_SSL_VERIFYHOST => 0,
-            CURLOPT_SSL_VERIFYPEER => 0,
-            CURLOPT_TIMEOUT => 30,
-            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-            CURLOPT_CUSTOMREQUEST => 'GET',
-            CURLOPT_HTTPHEADER => [
-                "Authorization: Bearer $secret_key",
-                'Cache-Control: no-cache',
-            ],
-        ]);
-        $response = curl_exec($curl);
-        $err = curl_error($curl);
-        if ($err) {
-            info($err);
-        }
-        curl_close($curl);
-        $final_data = json_decode($response);
-        if ($final_data->status == true) {
-
-            $paymentDetails = [
-                'status' => $final_data?->data?->status,
-                'transaction_id' => $transaction,
-                'requested_amount' => $final_data?->data->requested_amount,
-                'amount' => $final_data?->data?->amount,
-                'currency' => $final_data?->data?->currency,
-                'gateway_response' => $final_data?->data?->gateway_response,
-                'paid_at' => $final_data?->data?->paid_at,
-                'card_last_4_digits' => $final_data?->data->authorization?->last4,
-            ];
-
-            Session::put('paid_amount', ($final_data?->data?->amount / 100));
-            Session::put('payable_currency', $final_data?->data?->currency);
-            Session::put('payment_details', $paymentDetails);
-            Session::put('after_success_gateway', 'Paystack');
-            Session::put('after_success_transaction', $transaction);
-            Session::put('payable_with_charge', $final_data?->data?->amount / 100);
-
-            return response()->json(['message' => 'payment success']);
-        } else {
-            $notification = trans('Something went wrong, please try again');
-
-            return response()->json(['message' => $notification], 403);
-        } 
-    }
-
-    public function pay_via_bank(BankInformationRequest $request)
-    {
-        $bankDetails = json_encode($request->only(['bank_name', 'account_number', 'routing_number', 'branch', 'transaction']));
-
-        $user = userAuth();
-
-        $order = Order::create([
-            'invoice_id' => Str::random(10),
-            'buyer_id' => $user->id,
-            'status' => 'completed',
-            'has_coupon' => Session::has('coupon_code') ? 1 : 0,
-            'coupon_code' => Session::get('coupon_code'),
-            'coupon_discount_percent' => Session::get('offer_percentage'),
-            'coupon_discount_amount' => Session::get('coupon_discount_amount'),
-            'payment_method' => 'Bank',
-            'payment_status' => 'pending',
-            'payable_amount' => Session::get('payable_amount'),
-            'gateway_charge' => 0,
-            'payable_with_charge' => $this->calculate_payable_charge(Session::get('payable_amount'), getSessionCurrency())->payable_with_charge,
-            'paid_amount' => $this->calculate_payable_charge(Session::get('payable_amount'), getSessionCurrency())->payable_with_charge,
-            'conversion_rate' => 1,
-            'payable_currency' => getSessionCurrency(),
-            'payment_details' => $bankDetails,
-            'transaction_id' => Str::random(10),
-            'commission_rate' => Cache::get('setting')->commission_rate,
-        ]);
-
-        foreach (Cart::content() as $item) {
-            OrderItem::create([
-                'order_id' => $order->id,
-                'price' => $item->price,
-                'course_id' => $item->id,
-                'commission_rate' => Cache::get('setting')->commission_rate,
-            ]);
-        }
-
-        Session::forget([
-            'after_success_url',
-            'after_faild_url',
-            'payable_amount',
-            'gateway_charge',
-            'after_success_gateway',
-            'after_success_transaction',
-            'subscription_plan_id',
-            'payable_with_charge',
-            'payable_currency',
-            'subscription_plan_id',
-            'paid_amount',
-            'payment_details',
-            'cart',
-            'coupon_code',
-            'offer_percentage',
-            'coupon_discount_amount',
-            'gateway_charge_in_usd'
-        ]);
-
-        $notification = trans('Payment Success.');
-        $notification = ['messege' => $notification, 'alert-type' => 'success'];
-
-        return redirect()->route('order-success')->with($notification);
-    }
-
-    function pay_via_free_gateway() {
-        if(!Session::has('payable_amount') || Session::get('payable_amount') != 0) {
-
-            $notification = trans('Payment faild, please try again');
-            $notification = ['messege' => $notification, 'alert-type' => 'error'];
-            return redirect()->back()->with($notification);
-        }
-
-        $after_success_url = route('payment-addon-success');
-        $after_faild_url = route('payment-addon-faild');
-
-        Session::put('after_success_url', $after_success_url);
-        Session::put('after_faild_url', $after_faild_url);
-        Session::put('payable_amount', 0);
-        Session::put('paid_amount', 0);
-        Session::put('after_success_gateway', 'Free');
-        Session::put('after_success_transaction', Str::random(10));
-        Session::put('payment_details', []);
-        session()->put('payable_with_charge', 0);
-
-        return redirect($after_success_url);
-    }
-
     public function payment_addon_success($bankDetails = null)
     {
+        Log::info('payment_addon_success called. Session current_order_id: ' . Session::get('current_order_id'));
+
         $payable_amount = Session::get('payable_amount');
         $payable_with_charge = Session::get('payable_with_charge', 0);
         $payable_currency = Session::get('payable_currency');
@@ -476,18 +45,117 @@ class PaymentController extends Controller
         $transaction = Session::get('after_success_transaction');
         $paid_amount = Session::get('paid_amount', 0);
         $paymentDetails = Session::get('payment_details');
-        $gateway_charge = Session::get('gateway_charge_in_usd');
+        $gateway_charge = Session::get('gateway_charge');
 
-        $this->_processSuccessfulPayment(
-            $payable_amount,
-            $payable_with_charge,
-            $payable_currency,
-            $gateway_name,
-            $transaction,
-            $paid_amount,
-            $paymentDetails,
-            $gateway_charge
-        );
+        if (in_array($gateway_name, ['Razorpay', 'Stripe'])) {
+            $allCurrencyCodes = BasicPaymentSupportedCurrenyListEnum::getStripeSupportedCurrencies();
+
+            if (in_array(Str::upper($payable_currency), $allCurrencyCodes['non_zero_currency_codes'])) {
+                $paid_amount = $paid_amount;
+            } elseif (in_array(Str::upper($payable_currency), $allCurrencyCodes['three_digit_currency_codes'])) {
+                $paid_amount = (int) rtrim(strval($paid_amount), '0');
+            } else {
+                $paid_amount = floatval($paid_amount / 100);
+            }
+        }
+
+        $user = userAuth();
+
+        // Retrieve the existing order
+        $order_id = Session::get('current_order_id');
+        $order = Order::find($order_id);
+
+        Log::info('Order found: ' . ($order ? $order->id : 'null'));
+
+        if (!$order) {
+            // Handle case where order is not found (e.g., session expired, direct access)
+            $notification = trans('Order not found or session expired.');
+            $notification = ['messege' => $notification, 'alert-type' => 'error'];
+            return redirect()->route('order-fail')->with($notification);
+        }
+
+        // Update the existing order
+        $order->update([
+            'status' => 'completed',
+            'payment_method' => $gateway_name,
+            'payment_status' => 'paid',
+            'payable_amount' => $payable_amount,
+            'gateway_charge' => $gateway_charge,
+            'payable_with_charge' => $payable_with_charge,
+            'paid_amount' => $paid_amount,
+            'payable_currency' => $payable_currency,
+            'conversion_rate' => Session::get('currency_rate', 1),
+            'payment_details' => json_encode($paymentDetails),
+            'transaction_id' => $transaction,
+        ]);
+
+        Log::info('Order updated to: status=' . $order->status . ', payment_status=' . $order->payment_status);
+
+        $data_layer_order_items = [];
+
+        foreach (Cart::content() as $item) {
+            $order_item = [
+                'order_id' => $order->id,
+                'price' => $item->price,
+                'course_id' => $item->id,
+                'commission_rate' => Cache::get('setting')->commission_rate,
+            ];
+            // OrderItem is already created in createTransaction, no need to create again
+            // OrderItem::create([
+            //     'order_id' => $order->id,
+            //     'price' => $item->price,
+            //     'course_id' => $item->id,
+            //     'commission_rate' => Cache::get('setting')->commission_rate,
+            // ]);
+            $data_layer_order_items[] = [
+                'course_name' => $item->name,
+                'price' => currency($item->price),
+                'url' => route('course.show', $item->options->slug),
+            ];
+            Enrollment::create([
+                'order_id' => $order->id,
+                'user_id' => $user->id,
+                'course_id' => $item->id,
+                'has_access' => 1,
+            ]);
+
+            // insert instructor commission to his wallet
+            $commissionAmount = $item->price * ($order->commission_rate / 100);
+            $amountAfterCommission = $item->price - $commissionAmount;  
+            $instructor = Course::find($item->id)->instructor;
+            $instructor->increment('wallet_balance', $amountAfterCommission);
+            
+        }
+        $settings = cache()->get('setting');
+        $marketingSettings = cache()->get('marketing_setting');
+        if ($user && $settings->google_tagmanager_status == 'active' && $marketingSettings->order_success) {
+            $order_success = [
+                'invoice_id' => $order->invoice_id,
+                'transaction_id' => $order->transaction_id,
+                'payment_method' => $order->payment_method,
+                'payable_currency' => $order->payable_currency,
+                'paid_amount' => $order->paid_amount,
+                'payment_status' => $order->payment_status,
+                'order_items' => $data_layer_order_items,
+                'student_info' => [
+                    'name' => $user->name,
+                    'email' => $user->email,
+                ],
+            ];
+            session()->put('enrollSuccess', $order_success);
+        }
+
+        // send mail
+
+        $this->handleMailSending([
+            'email' => $user->email,
+            'name' => $user->name,
+            'order_id' => $order->invoice_id,
+            'paid_amount' => $order->paid_amount. ' '.$order->payable_currency,
+            'payment_method' => $order->payment_method
+        ]);
+
+        Cart::destroy();
 
         Session::forget([
             'after_success_url',
@@ -502,11 +170,11 @@ class PaymentController extends Controller
             'subscription_plan_id',
             'paid_amount',
             'payment_details',
-            'cart',
             'coupon_code',
             'offer_percentage',
             'coupon_discount_amount',
-            'gateway_charge_in_usd'
+            'gateway_charge_in_usd',
+            'current_order_id' // Forget the stored order ID
         ]);
 
         $notification = trans('Payment Success.');
@@ -572,6 +240,16 @@ class PaymentController extends Controller
 
     public function payment_addon_faild()
     {
+        $order_id = Session::get('current_order_id');
+        $order = Order::find($order_id);
+
+        if ($order) {
+            $order->update([
+                'status' => 'failed',
+                'payment_status' => 'failed',
+            ]);
+        }
+
         $data_layer_order_items = [];
         foreach (Cart::content() as $item) {
             $data_layer_order_items[] = [
@@ -614,12 +292,150 @@ class PaymentController extends Controller
             'coupon_code',
             'offer_percentage',
             'coupon_discount_amount',
-            'gateway_charge_in_usd'
+            'gateway_charge_in_usd',
+            'current_order_id' // Forget the stored order ID
         ]);
 
         $notification = trans('Payment faild, please try again');
         $notification = ['messege' => $notification, 'alert-type' => 'error'];
 
+        return redirect()->route('order-fail')->with($notification);
+    }
+
+    public function midtransCallbackSuccess(Request $request)
+    {
+        Log::info('Midtrans Callback Received. Request data: ' . json_encode($request->all()));
+
+        $midtrans_info = \Modules\Midtrans\app\Models\MidtransSetting::get();
+        $midtrans_payment_settings = [];
+        foreach ($midtrans_info as $item) {
+            $midtrans_payment_settings[$item->key] = $item->value;
+        }
+
+        \Midtrans\Config::$serverKey = $midtrans_payment_settings['server_key'] ?? '';
+        \Midtrans\Config::$isProduction = filter_var($midtrans_payment_settings['is_production'] ?? false, FILTER_VALIDATE_BOOLEAN);
+        \Midtrans\Config::$isSanitized = true;
+        \Midtrans\Config::$is3ds = true;
+
+        $transaction_status = null;
+        $fraud_status = null;
+        $transaction_id = null;
+        $order_id = null;
+        $gross_amount = null;
+        $payment_type = null;
+
+        try {
+            $notif = new \Midtrans\Notification();
+            Log::info('Midtrans Notification Object: ' . json_encode($notif));
+            $transaction_status = $notif->transaction_status;
+            $fraud_status = $notif->fraud_status;
+            $transaction_id = $notif->transaction_id;
+            $order_id = $notif->order_id; // This is the invoice_id from our Order
+            $gross_amount = $notif->gross_amount;
+            $payment_type = $notif->payment_type;
+
+        } catch (\Exception $e) {
+            Log::error('Midtrans Notification Error: ' . $e->getMessage());
+            $notification = trans('Payment verification failed.');
+            $notification = ['messege' => $notification, 'alert-type' => 'error'];
+            return redirect()->route('order-fail')->with($notification);
+        }
+
+        Log::info('Transaction Status: ' . $transaction_status . ', Fraud Status: ' . $fraud_status);
+
+        if ($transaction_status == 'capture') {
+            if ($fraud_status == 'challenge') {
+                Session::put('after_success_gateway', 'Midtrans');
+                Session::put('after_success_transaction', $transaction_id);
+                Session::put('paid_amount', $gross_amount);
+                Session::put('payable_currency', getSessionCurrency());
+                Session::put('payable_amount', $notif->gross_amount); // Set payable_amount from Midtrans notification
+                Session::put('gateway_charge', 0); // Assuming 0 for Midtrans unless specified
+                Session::put('payment_details', [
+                    'transaction_status' => $transaction_status,
+                    'fraud_status' => $fraud_status,
+                    'payment_type' => $payment_type,
+                    'gross_amount' => $notif->gross_amount,
+                    'currency' => $notif->currency,
+                    'transaction_time' => $notif->transaction_time,
+                    'settlement_time' => $notif->settlement_time ?? null,
+                    'va_numbers' => $notif->va_numbers ?? null,
+                    'bill_key' => $notif->bill_key ?? null,
+                    'bill_code' => $notif->bill_code ?? null,
+                    'pdf_url' => $notif->pdf_url ?? null,
+                ]);
+                Log::info('Session data set (capture/challenge): after_success_gateway=' . Session::get('after_success_gateway') . ', transaction=' . Session::get('after_success_transaction') . ', paid_amount=' . Session::get('paid_amount'));
+                return redirect()->route('payment-addon-success');
+            } else if ($fraud_status == 'accept') {
+                Session::put('after_success_gateway', 'Midtrans');
+                Session::put('after_success_transaction', $transaction_id);
+                Session::put('paid_amount', $gross_amount);
+                Session::put('payable_currency', getSessionCurrency());
+                Session::put('payable_amount', $notif->gross_amount); // Set payable_amount from Midtrans notification
+                Session::put('gateway_charge', 0); // Assuming 0 for Midtrans unless specified
+                Session::put('payment_details', [
+                    'transaction_status' => $transaction_status,
+                    'fraud_status' => $fraud_status,
+                    'payment_type' => $payment_type,
+                    'gross_amount' => $notif->gross_amount,
+                    'currency' => $notif->currency,
+                    'transaction_time' => $notif->transaction_time,
+                    'settlement_time' => $notif->settlement_time ?? null,
+                    'va_numbers' => $notif->va_numbers ?? null,
+                    'bill_key' => $notif->bill_key ?? null,
+                    'bill_code' => $notif->bill_code ?? null,
+                    'pdf_url' => $notif->pdf_url ?? null,
+                ]);
+                Log::info('Session data set (capture/accept): after_success_gateway=' . Session::get('after_success_gateway') . ', transaction=' . Session::get('after_success_transaction') . ', paid_amount=' . Session::get('paid_amount'));
+                return redirect()->route('payment-addon-success');
+            }
+        } else if ($transaction_status == 'settlement') {
+            Session::put('after_success_gateway', 'Midtrans');
+            Session::put('after_success_transaction', $transaction_id);
+            Session::put('paid_amount', $gross_amount);
+            Session::put('payable_currency', getSessionCurrency());
+            Session::put('payable_amount', $notif->gross_amount); // Set payable_amount from Midtrans notification
+            Session::put('gateway_charge', 0); // Assuming 0 for Midtrans unless specified
+            Session::put('payment_details', [
+                'transaction_status' => $transaction_status,
+                'fraud_status' => $fraud_status,
+                'payment_type' => $payment_type,
+                'gross_amount' => $notif->gross_amount,
+                'currency' => $notif->currency,
+                'transaction_time' => $notif->transaction_time,
+                'settlement_time' => $notif->settlement_time ?? null,
+                'va_numbers' => $notif->va_numbers ?? null,
+                'bill_key' => $notif->bill_key ?? null,
+                'bill_code' => $notif->bill_code ?? null,
+                'pdf_url' => $notif->pdf_url ?? null,
+            ]);
+            Log::info('Session data set (settlement): after_success_gateway=' . Session::get('after_success_gateway') . ', transaction=' . Session::get('after_success_transaction') . ', paid_amount=' . Session::get('paid_amount'));
+            return redirect()->route('payment-addon-success');
+        } else if ($transaction_status == 'pending') {
+            $notification = trans('Payment is pending. Please complete the payment.');
+            $notification = ['messege' => $notification, 'alert-type' => 'warning'];
+            Log::info('Session data set (pending): after_success_gateway=' . Session::get('after_success_gateway') . ', transaction=' . Session::get('after_success_transaction') . ', paid_amount=' . Session::get('paid_amount'));
+            return redirect()->route('order-unfinish')->with($notification);
+        } else if ($transaction_status == 'deny') {
+            $notification = trans('Payment denied.');
+            $notification = ['messege' => $notification, 'alert-type' => 'error'];
+            Log::info('Session data set (deny): after_success_gateway=' . Session::get('after_success_gateway') . ', transaction=' . Session::get('after_success_transaction') . ', paid_amount=' . Session::get('paid_amount'));
+            return redirect()->route('order-fail')->with($notification);
+        } else if ($transaction_status == 'expire') {
+            $notification = trans('Payment expired.');
+            $notification = ['messege' => $notification, 'alert-type' => 'error'];
+            Log::info('Session data set (expire): after_success_gateway=' . Session::get('after_success_gateway') . ', transaction=' . Session::get('after_success_transaction') . ', paid_amount=' . Session::get('paid_amount'));
+            return redirect()->route('order-fail')->with($notification);
+        } else if ($transaction_status == 'cancel') {
+            $notification = trans('Payment cancelled.');
+            $notification = ['messege' => $notification, 'alert-type' => 'error'];
+            Log::info('Session data set (cancel): after_success_gateway=' . Session::get('after_success_gateway') . ', transaction=' . Session::get('after_success_transaction') . ', paid_amount=' . Session::get('paid_amount'));
+            return redirect()->route('order-fail')->with($notification);
+        }
+
+        $notification = trans('Payment status unknown.');
+        $notification = ['messege' => $notification, 'alert-type' => 'error'];
+        Log::info('Session data set (unknown): after_success_gateway=' . Session::get('after_success_gateway') . ', transaction=' . Session::get('after_success_transaction') . ', paid_amount=' . Session::get('paid_amount'));
         return redirect()->route('order-fail')->with($notification);
     }
 
@@ -629,6 +445,10 @@ class PaymentController extends Controller
 
     function order_fail() {
        return view('frontend.pages.order-fail'); 
+    }
+
+    function order_unfinish() {
+       return view('frontend.pages.order-unfinish'); 
     }
 
     function handleMailSending(array $mailData)

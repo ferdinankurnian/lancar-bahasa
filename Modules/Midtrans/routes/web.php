@@ -17,8 +17,5 @@ Route::get('/midtrans/finish', [MidtransController::class, 'finish'])->name('mid
 Route::get('/midtrans/unfinish', [MidtransController::class, 'unfinish'])->name('midtrans.unfinish');
 Route::get('/midtrans/error', [MidtransController::class, 'error'])->name('midtrans.error');
 
-// Route for creating Midtrans transaction (Snap Token) - Kept for now, but new flow is preferred
+// Route for creating Midtrans transaction (Snap Token)
 Route::post('/midtrans/create-transaction', [MidtransController::class, 'createTransaction'])->name('midtrans.create-transaction');
-
-// New route for the dedicated payment page
-Route::get('/midtrans/pay/{order}', [MidtransController::class, 'pay'])->name('midtrans.pay');

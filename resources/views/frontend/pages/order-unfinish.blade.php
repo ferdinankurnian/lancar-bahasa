@@ -1,14 +1,25 @@
 @extends('frontend.layouts.master')
-@section('title')
-    <title>{{ __('Transaction Unfinished') }}</title>
-@endsection
-@section('content')
-    <div class="container">
-        <div class="row justify-content-center">
-            <div class="col-md-8 text-center py-5">
-                <h2 class="text-warning">{{ __('Transaction Unfinished') }}</h2>
-                <p>{{ __('Your transaction was not completed. Please try again or contact support if you have any issues.') }}</p>
-                <a href="{{ route('home') }}" class="btn btn-primary mt-3">{{ __('Go to Home') }}</a>
+@section('meta_title', 'Order Unfinish'. ' || ' . $setting->app_name)
+
+@section('contents')
+    <!-- breadcrumb-area -->
+    <!-- <x-frontend.breadcrumb :title="__('Order Unfinish')" :links="[
+        ['url' => route('home'), 'text' => __('Home')],
+        ['url' => route('checkout.index'), 'text' => __('Order Unfinish')],
+    ]" /> -->
+    <!-- breadcrumb-area-end -->
+
+    <!-- checkout-area -->
+    <div class="checkout__area section-py-120">
+        <div class="container">
+            <div class="row">
+                <div class="text-center">
+                    <img src="{{ asset('uploads/website-images/question.png') }}" alt="">
+                    <h6 class="mt-2">{{ __('Waiting on payment') }}</h6>
+                    <p>{{ __("Hey! We're still waiting for your payment!") }}</p>
+                    <a href="{{ route('checkout.index') }}" class="btn btn-primary me-2">{{ __('Pay Now') }}</a>
+                    <a href="{{ route('student.dashboard') }}" class="btn btn-primary">{{ __('Go to Dashboard') }}</a>
+                </div>     
             </div>
         </div>
     </div>

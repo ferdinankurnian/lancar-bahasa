@@ -3,10 +3,10 @@
 
 @section('contents')
     <!-- breadcrumb-area -->
-    <x-frontend.breadcrumb :title="__('Order Completed')" :links="[
+    <!-- <x-frontend.breadcrumb :title="__('Order Completed')" :links="[
         ['url' => route('home'), 'text' => __('Home')],
         ['url' => route('checkout.index'), 'text' => __('Order Completed')],
-    ]" />
+    ]" /> -->
     <!-- breadcrumb-area-end -->
 
     <!-- checkout-area -->

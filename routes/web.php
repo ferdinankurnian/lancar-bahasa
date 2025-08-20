@@ -251,24 +251,16 @@ Route::group(['middleware' => 'maintenance.mode'], function () {
         /** checkout routes */
         Route::get('checkout/pay/{order}', [CheckOutController::class, 'payWithMidtrans'])->name('checkout.pay');
         Route::get('checkout', [CheckOutController::class, 'index'])->name('checkout.index');
-        Route::get('order/completed/{order}', [CheckOutController::class, 'orderCompleted'])->name('order.completed');
+        Route::post('midtrans-create-transaction', [PaymentController::class, 'createMidtransTransaction'])->name('midtrans.create-transaction');
 
         /**payment related route start */
-        Route::get('payment', [PaymentController::class, 'payment'])->name('payment');
-        Route::post('pay-via-stripe', [PaymentController::class, 'pay_via_stripe'])->name('pay-via-stripe');
-        Route::get('pay-via-paypal', [PaymentController::class, 'pay_via_paypal'])->name('pay-via-paypal');
-        Route::post('pay-via-bank', [PaymentController::class, 'pay_via_bank'])->name('pay-via-bank');
-        Route::post('pay-via-razorpay', [PaymentController::class, 'pay_via_razorpay'])->name('pay-via-razorpay');
-        Route::get('pay-via-mollie', [PaymentController::class, 'pay_via_mollie'])->name('pay-via-mollie');
-        Route::get('pay-via-instamojo', [PaymentController::class, 'pay_via_instamojo'])->name('pay-via-instamojo');
-        Route::post('pay-via-flutterwave', [PaymentController::class, 'pay_via_flutterwave'])->name('pay-via-flutterwave');
-        Route::post('pay-via-paystack', [PaymentController::class, 'pay_via_paystack'])->name('pay-via-paystack');
-        Route::post('pay-via-bank', [PaymentController::class, 'pay_via_bank'])->name('pay-via-bank');
-        Route::post('pay-via-free-gateway', [PaymentController::class, 'pay_via_free_gateway'])->name('pay-via-free-gateway');
+        
         Route::get('/payment-addon-success', [PaymentController::class, 'payment_addon_success'])->name('payment-addon-success');
         Route::get('/payment-addon-faild', [PaymentController::class, 'payment_addon_faild'])->name('payment-addon-faild');
         Route::get('order-completed', [PaymentController::class, 'order_success'])->name('order-success');
         Route::get('order-fail', [PaymentController::class, 'order_fail'])->name('order-fail');
+        Route::get('order-unfinish', [PaymentController::class, 'order_unfinish'])->name('order-unfinish');
+        Route::post('midtrans-callback-success', [PaymentController::class, 'midtransCallbackSuccess'])->name('midtrans.callback.success');
 
         Route::post('tinymce-upload-image', [TinymceImageUploadController::class, 'upload']);
         Route::delete('tinymce-delete-image', [TinymceImageUploadController::class, 'destroy']);
