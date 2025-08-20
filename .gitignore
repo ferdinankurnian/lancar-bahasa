@@ -18,4 +18,10 @@ yarn-error.log
 /.vscode
 /vendor/srmklive/paypal/tests/Mocks/samples
 public/uploads/media/
+
+# Environment variables
 .env
+.env.*
+!.env.example
+!.env.test
+!.env.testing
