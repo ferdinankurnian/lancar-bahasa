@@ -155,8 +155,6 @@ class PaymentController extends Controller
             'payment_method' => $order->payment_method
         ]);
 
-        Cart::destroy();
-
         Session::forget([
             'after_success_url',
             'after_faild_url',

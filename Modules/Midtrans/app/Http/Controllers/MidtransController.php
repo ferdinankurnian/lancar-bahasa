@@ -137,6 +137,8 @@ class MidtransController extends Controller
             ];
         }
 
+        Cart::destroy();
+
         // If a coupon is applied, add it as a separate item with a negative value
         if (Session::has('coupon_code')) {
             $itemDetails[] = [
