@@ -41,6 +41,7 @@ class MidtransController extends Controller
         $rules = [
             'server_key'         => 'required',
             'client_key'      => 'required',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
         ];
         $customMessages = [
             'server_key.required'         => __('Midtrans server key is required'),
@@ -53,6 +54,14 @@ class MidtransController extends Controller
         MidtransSetting::updateOrCreate(['key' => 'client_key'], ['value' => $request->client_key]);
         MidtransSetting::updateOrCreate(['key' => 'is_production'], ['value' => $request->is_production]);
         MidtransSetting::updateOrCreate(['key' => 'status'], ['value' => $request->status]);
+
+        if ($request->hasFile('image')) {
+            $image = $request->file('image');
+            $image_name = 'midtrans-' . time() . '.' . $image->getClientOriginalExtension();
+            $image->move(public_path('uploads/website-images'), $image_name);
+            $image_path = 'uploads/website-images/' . $image_name;
+            MidtransSetting::updateOrCreate(['key' => 'image'], ['value' => $image_path]);
+        }
 
         $this->put_midtrans_payment_cache();
 
@@ -138,6 +147,9 @@ class MidtransController extends Controller
             ];
         }
 
+        // If Midtrans requires detailed item breakdown, you might need to iterate through $order->orderItems
+        // and populate $itemDetails accordingly. For now, using grossAmount as total.
+
         $transactionDetails = [
             'order_id' => $order->invoice_id, // Use invoice_id as order_id for Midtrans
             'gross_amount' => $payable_amount,
@@ -177,5 +189,73 @@ class MidtransController extends Controller
         }
         $midtrans_payment = (object) $midtrans_payment;
         \Cache::put('midtrans_payment', $midtrans_payment);
+    }
+
+    public function pay(Order $order)
+    {
+        // Update order to reflect Midtrans is being used
+        $order->update([
+            'gateway_name' => 'Midtrans',
+            'payment_method' => 'Midtrans',
+        ]);
+
+        // Get Midtrans credentials
+        $midtrans_info = MidtransSetting::get();
+        $midtrans_payment_settings = [];
+        foreach ($midtrans_info as $item) {
+            $midtrans_payment_settings[$item->key] = $item->value;
+        }
+
+        $serverKey = $midtrans_payment_settings['server_key'] ?? '';
+        $clientKey = $midtrans_payment_settings['client_key'] ?? '';
+        $isProduction = filter_var($midtrans_payment_settings['is_production'] ?? false, FILTER_VALIDATE_BOOLEAN);
+
+        // Set Midtrans configuration
+        Config::$serverKey = $serverKey;
+        Config::$isProduction = $isProduction;
+        Config::$isSanitized = true;
+        Config::$is3ds = true;
+
+        // Prepare transaction details from the order
+        $user = $order->user;
+        $transactionDetails = [
+            'order_id' => $order->invoice_id, // Use the existing invoice_id from the order
+            'gross_amount' => $order->payable_amount,
+        ];
+
+        $itemDetails = [];
+        foreach ($order->orderItems as $item) {
+            $itemDetails[] = [
+                'id' => $item->course_id,
+                'price' => $item->price,
+                'quantity' => 1,
+                'name' => $item->course->title, // Assuming course relationship exists and has a title
+            ];
+        }
+
+        $customerDetails = [
+            'first_name' => $user->name ?? 'Guest',
+            'email' => $user->email ?? 'guest@example.com',
+        ];
+
+        $params = [
+            'transaction_details' => $transactionDetails,
+            'customer_details' => $customerDetails,
+            'item_details' => $itemDetails,
+        ];
+
+        try {
+            $snapToken = Snap::getSnapToken($params);
+        } catch (\Exception $e) {
+            // Handle exception, maybe redirect back with an error
+            return redirect()->route('checkout.index')->with(['messege' => $e->getMessage(), 'alert-type' => 'error']);
+        }
+
+        return view('midtrans::pay', [
+            'snap_token' => $snapToken,
+            'client_key' => $clientKey,
+            'is_production' => $isProduction,
+            'order' => $order,
+        ]);
     }
 }

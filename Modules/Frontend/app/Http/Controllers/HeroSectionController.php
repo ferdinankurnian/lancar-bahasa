@@ -26,7 +26,7 @@ class HeroSectionController extends Controller {
         if (!Language::where('code', $code)->exists()) {
             abort(404);
         }
-        if (DEFAULT_HOMEPAGE == ThemeList::BUSINESS->value) {
+        if (config('app.default_homepage') == ThemeList::BUSINESS->value) {
             abort(404);
         }
         $languages = allLanguages();

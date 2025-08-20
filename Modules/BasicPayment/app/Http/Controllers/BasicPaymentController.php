@@ -177,6 +177,7 @@ class BasicPaymentController extends Controller
         $rules = [
             'server_key'         => 'required',
             'client_key'      => 'required',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048', // Added image validation
         ];
         $customMessages = [
             'server_key.required'         => __('Midtrans server key is required'),
@@ -189,6 +190,15 @@ class BasicPaymentController extends Controller
         MidtransSetting::updateOrCreate(['key' => 'client_key'], ['value' => $request->client_key]);
         MidtransSetting::updateOrCreate(['key' => 'is_production'], ['value' => $request->is_production]);
         MidtransSetting::updateOrCreate(['key' => 'status'], ['value' => $request->status]);
+
+        // Added image upload logic
+        if ($request->hasFile('image')) {
+            $image = $request->file('image');
+            $image_name = 'midtrans-' . time() . '.' . $image->getClientOriginalExtension();
+            $image->move(public_path('uploads/website-images'), $image_name);
+            $image_path = 'uploads/website-images/' . $image_name;
+            MidtransSetting::updateOrCreate(['key' => 'image'], ['value' => $image_path]);
+        }
 
         $this->put_midtrans_payment_cache();
 

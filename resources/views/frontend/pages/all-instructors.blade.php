@@ -1,6 +1,6 @@
 
 @extends('frontend.layouts.master')
-@section('meta_title', __('All Instructors') . ' || ' . $setting->app_name)
+@section('meta_title', __('All Instructors') . ' | ' . $setting->app_name)
 @section('contents')
     <!-- breadcrumb-area -->
     <x-frontend.breadcrumb :title="__('All Instructors')" :links="[['url' => route('home'), 'text' => __('Home')], ['url' => '', 'text' => __('All Instructors')]]" />

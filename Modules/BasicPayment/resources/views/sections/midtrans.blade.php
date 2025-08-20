@@ -1,6 +1,6 @@
 <div class="tab-pane fade" id="midtrans_tab" role="tabpanel" aria-labelledby="midtrans-tab">
     <div class="card-body">
-        <form action="{{ route('admin.update-midtrans') }}" method="POST">
+        <form action="{{ route('admin.update-midtrans') }}" method="POST" enctype="multipart/form-data">
             @csrf
             @method('PUT')
 
@@ -28,6 +28,15 @@
                     <option value="1" {{ (isset($midtrans_payment->status) && $midtrans_payment->status == 1) ? 'selected' : '' }}>{{ __('Active') }}</option>
                     <option value="0" {{ (isset($midtrans_payment->status) && $midtrans_payment->status == 0) ? 'selected' : '' }}>{{ __('Inactive') }}</option>
                 </select>
+            </div>
+
+            <div class="form-group">
+                <label for="image">{{ __('Image') }}</label>
+                <input type="file" name="image" class="form-control" id="image-upload-midtrans">
+            </div>
+
+            <div class="form-group">
+                <div id="image-preview-midtrans" class="image-preview"></div>
             </div>
 
             <button type="submit" class="btn btn-primary">{{ __('Update') }}</button>

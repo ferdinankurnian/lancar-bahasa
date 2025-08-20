@@ -1,5 +1,5 @@
 @extends('frontend.layouts.master')
-@section('meta_title', 'Instructor Details' . ' || ' . $setting->app_name)
+@section('meta_title', $instructor->name . ' | ' . $setting->app_name)
 
 @section('contents')
     <!-- breadcrumb-area -->

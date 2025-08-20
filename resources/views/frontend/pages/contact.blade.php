@@ -1,5 +1,5 @@
 @extends('frontend.layouts.master')
-@section('meta_title', $seo_setting['contact_page']['seo_title'])
+@section('meta_title', __('Contact') . ' | ' . $setting->app_name)
 @section('meta_description', $seo_setting['contact_page']['seo_description'])
 @section('contents')
     <!-- breadcrumb-area -->

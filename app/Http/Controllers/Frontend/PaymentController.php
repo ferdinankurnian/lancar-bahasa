@@ -183,6 +183,61 @@ class PaymentController extends Controller
         return redirect()->route('order-success')->with($notification);
     }
 
+    private function _processSuccessfulPayment(
+        Order $order, // Changed signature to accept Order object
+        $gateway_name,
+        $transaction,
+        $paymentDetails
+    ) {
+        $user = userAuth(); // User is already associated with the order
+
+        // Ensure order status is completed and paid
+        $order->payment_status = 'paid';
+        $order->status = 'completed';
+        $order->save();
+
+        // OrderItems, Enrollments, and Cart::destroy() are now handled in MidtransController::createTransaction
+
+        $settings = cache()->get('setting');
+        $marketingSettings = cache()->get('marketing_setting');
+        if ($user && $settings->google_tagmanager_status == 'active' && $marketingSettings->order_success) {
+            // Populate data_layer_order_items from $order->orderItems relationship
+            $data_layer_order_items = [];
+            foreach ($order->orderItems as $item) {
+                $data_layer_order_items[] = [
+                    'course_name' => $item->course->title ?? 'N/A', // Assuming Course model has title
+                    'price' => currency($item->price),
+                    'url' => route('course.show', $item->course->slug ?? 'N/A'), // Assuming Course model has slug
+                ];
+            }
+
+            $order_success = [
+                'invoice_id' => $order->invoice_id,
+                'transaction_id' => $order->transaction_id,
+                'payment_method' => $order->payment_method,
+                'payable_currency' => $order->payable_currency,
+                'paid_amount' => $order->paid_amount,
+                'payment_status' => $order->payment_status,
+                'order_items' => $data_layer_order_items,
+                'student_info' => [
+                    'name' => $user->name,
+                    'email' => $user->email,
+                ],
+            ];
+            session()->put('enrollSuccess', $order_success);
+        }
+
+        // send mail
+
+        $this->handleMailSending([
+            'email' => $user->email,
+            'name' => $user->name,
+            'order_id' => $order->invoice_id,
+            'paid_amount' => $order->paid_amount. ' '.$order->payable_currency,
+            'payment_method' => $order->payment_method
+        ]);
+    }
+
     public function payment_addon_faild()
     {
         $order_id = Session::get('current_order_id');

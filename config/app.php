@@ -17,6 +17,7 @@ return [
      */
 
     'name' => env('APP_NAME', 'SkillGro'),
+    'default_homepage' => env('DEFAULT_HOMEPAGE', 'main'),
 
     /*
     |--------------------------------------------------------------------------

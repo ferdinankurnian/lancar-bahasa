@@ -1,5 +1,5 @@
 @extends('frontend.layouts.master')
-@section('meta_title', 'Become Instructor'. ' || ' . $setting->app_name)
+@section('meta_title', 'Become Instructor'. ' | ' . $setting->app_name)
 @section('contents')
     <!-- breadcrumb-area -->
     <x-frontend.breadcrumb

@@ -1,6 +1,6 @@
 @extends('frontend.layouts.master')
 
-@section('meta_title', $seo_setting['about_page']['seo_title'])
+@section('meta_title', $about_us->meta_title ?? (__('About Us') . ' | ' . $setting->app_name))
 @section('meta_description', $seo_setting['about_page']['seo_description'])
 
 @section('contents')

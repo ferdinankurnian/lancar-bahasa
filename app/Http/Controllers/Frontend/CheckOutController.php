@@ -7,13 +7,20 @@ use App\Traits\GetGlobalInformationTrait;
 use Gloudemans\Shoppingcart\Facades\Cart;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Session;
-use Modules\Currency\app\Models\MultiCurrency;
+use Illuminate\Support\Facades\Cache;
+use Modules\Order\app\Models\Order;
+use Modules\Order\app\Models\OrderItem;
 use Modules\Midtrans\app\Models\MidtransSetting;
+use Midtrans\Config;
+use Midtrans\Snap;
+use Midtrans\Notification;
+use Exception;
 
 class CheckOutController extends Controller
 {
     use GetGlobalInformationTrait;
-    function index()
+
+    public function __construct()
     {
         $products = Cart::content();
 
@@ -116,10 +123,14 @@ class CheckOutController extends Controller
             'status' => $midtrans_payment_settings['status'] ?? '0',
             'image' => $midtrans_payment_settings['image'], // Placeholder image, user can change later
         ];
-        /**end midtrans setting */
 
-        $basic_payment = $this->get_basic_payment_info();
-
+        try {
+            $snapToken = Snap::getSnapToken($params);
+            $order->snap_token = $snapToken;
+            $order->save();
+        } catch (Exception $e) {
+            return redirect()->route('cart')->with(['messege' => 'Error: ' . $e->getMessage(), 'alert-type' => 'error']);
+        }
 
         return view('frontend.pages.checkout')->with([
             'products' => $products,
@@ -144,16 +155,92 @@ class CheckOutController extends Controller
         ]);
     }
 
-    function cartTotal()
+    public function midtransCallback(Request $request)
+    {
+        try {
+            $notification = new Notification();
+            
+            $transaction = $notification->transaction_status;
+            $type = $notification->payment_type;
+            $order_id = $notification->order_id;
+            $fraud = $notification->fraud_status;
+
+            $order = Order::where('invoice_id', $order_id)->first();
+
+            if (!$order) {
+                return response()->json(['message' => 'Order not found'], 404);
+            }
+
+            if ($transaction == 'capture' || $transaction == 'settlement') {
+                if ($fraud == 'accept') {
+                    $order->payment_status = 'paid';
+                    $order->transaction_id = $notification->transaction_id;
+                    $order->payment_details = json_encode($notification->getResponse());
+                    $order->save();
+                }
+            } else if ($transaction == 'cancel' || $transaction == 'deny' || $transaction == 'expire') {
+                $order->payment_status = 'failed';
+                $order->save();
+            }
+
+            return response()->json(['message' => 'Notification handled'], 200);
+
+        } catch (Exception $e) {
+            return response()->json(['message' => 'Error: ' . $e->getMessage()], 500);
+        }
+    }
+
+    public function payWithMidtrans(Order $order)
+    {
+        if ($order->user_id !== auth()->id()) {
+            abort(403);
+        }
+
+        // If snap_token not yet generated (in case user directly accesses pay page)
+        if (!$order->snap_token) {
+            try {
+                $params = [
+                    'transaction_details' => [
+                        'order_id' => $order->invoice_id,
+                        'gross_amount' => $order->payable_amount,
+                    ],
+                    'customer_details' => [
+                        'first_name' => $order->user->first_name ?? '',
+                        'last_name' => $order->user->last_name ?? '',
+                        'email' => $order->user->email ?? '',
+                        'phone' => $order->user->phone ?? '',
+                    ],
+                ];
+                $snapToken = Snap::getSnapToken($params);
+                $order->snap_token = $snapToken;
+                $order->save();
+            } catch (Exception $e) {
+                return redirect()->route('checkout.index')->with(['messege' => 'Error: ' . $e->getMessage(), 'alert-type' => 'error']);
+            }
+        }
+
+        return view('frontend.pages.midtrans-pay', [
+            'order' => $order,
+            'snap_token' => $order->snap_token,
+        ]);
+    }
+
+    public function orderCompleted(Order $order)
+    {
+        if ($order->user_id !== auth()->id()) {
+            abort(403);
+        }
+
+        return view('frontend.pages.order-completed', ['order' => $order]);
+    }
+
+    public function cartTotal()
     {
         $cartTotal = 0;
-
         $cartItems = Cart::content();
         foreach ($cartItems as $key => $cartItem) {
             $cartTotal += $cartItem->price;
         }
-
         return $cartTotal;
     }
-
 }
