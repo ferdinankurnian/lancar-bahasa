@@ -1,7 +1,7 @@
 @extends('frontend.layouts.empty')
 @section('meta_title', 'Checkout' . ' | ' . $setting->app_name)
 @section('contents')
-    {{-- Midtrans Snap start --}}
+    {{-- This page is intentionally blank and initiates payment on load --}}
 @endsection
 
 @push('scripts')
@@ -16,36 +16,27 @@
             function midtransPayment() {
                 $.ajax({
                     type: 'POST',
-                    url: "{{ route('midtrans.create-transaction') }}", // This route needs to be created
+                    url: "{{ route('midtrans.create-transaction') }}",
                     data: {
                         _token: "{{ csrf_token() }}",
-                        payable_amount: "{{ Session::get('payable_amount') }}",
-                        // You might need to pass more order details here (e.g., order_id, user_id, item_details)
-                        // For now, just passing payable_amount
-                        user_name: "{{ $user->name ?? '' }}",
-                        user_email: "{{ $user->email ?? '' }}",
                     },
                     success: function(response) {
                         if (response.snap_token) {
                             snap.pay(response.snap_token, {
                                 onSuccess: function(result) {
-                                    /* You may add your own implementation here */
-                                    // alert("payment success!");
-                                    window.location.href = "{{ route('payment-addon-success') }}"; // Redirect to payment addon success to finalize order
+                                    // Redirect to our new finalize route to process the transaction securely
+                                    window.location.href = "{{ url('/midtrans/finalize') }}?order_id=" + result.order_id;
                                 },
                                 onPending: function(result) {
-                                    /* You may add your own implementation here */
-                                    // alert("wating your payment!");
-                                    window.location.href = "{{ route('order-unfinish') }}"; // Redirect to unfinish page
+                                    // On pending, redirect to the generic unfinish page
+                                    window.location.href = "{{ route('order-unfinish') }}";
                                 },
                                 onError: function(result) {
-                                    /* You may add your own implementation here */
-                                    // alert("payment failed!");
-                                    window.location.href = "{{ route('order-fail') }}"; // Redirect to error page
+                                    // On error, redirect to the generic fail page
+                                    window.location.href = "{{ route('order-fail') }}";
                                 },
                                 onClose: function() {
-                                    /* You may add your own implementation here */
-                                    // alert('customer closed the popup without finishing the payment');
+                                    // If user closes the popup, consider it an unfinished payment
                                     window.location.href = "{{ route('order-unfinish') }}";
                                 }
                             });
@@ -65,5 +56,4 @@
             });
         </script>
     @endif
-    {{-- Midtrans Snap end --}}
 @endpush
