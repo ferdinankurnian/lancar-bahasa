@@ -218,7 +218,7 @@ class PaymentController extends Controller
             'email' => $user->email,
             'name' => $user->name,
             'order_id' => $order->invoice_id,
-            'paid_amount' => $order->paid_amount. ' '.$order->payable_currency,
+            'paid_amount' => $order->paid_amount,
             'payment_method' => $order->payment_method
         ]);
     }

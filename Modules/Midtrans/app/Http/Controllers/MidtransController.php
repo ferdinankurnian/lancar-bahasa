@@ -194,6 +194,24 @@ class MidtransController extends Controller
 
             $user = Auth::loginUsingId($paymentData['user_id']);
 
+            // Get specific payment method name
+            $paymentType = $status->payment_type ?? 'midtrans';
+            $paymentMethodName = match ($paymentType) {
+                'credit_card' => 'Credit Card',
+                'gopay' => 'GoPay',
+                'shopeepay' => 'ShopeePay',
+                'qris' => 'QRIS',
+                'bca_va' => 'BCA Virtual Account',
+                'bni_va' => 'BNI Virtual Account',
+                'bri_va' => 'BRI Virtual Account',
+                'echannel' => 'Mandiri Bill',
+                'other_va' => 'Other Virtual Account',
+                'akulaku' => 'Akulaku',
+                'alfamart' => 'Alfamart',
+                'indomaret' => 'Indomaret',
+                default => ucwords(str_replace('_', ' ', $paymentType)),
+            };
+
             $order = Order::create([
                 'invoice_id' => $orderId,
                 'buyer_id' => $paymentData['user_id'],
@@ -202,7 +220,7 @@ class MidtransController extends Controller
                 'coupon_code' => $paymentData['coupon_code'],
                 'coupon_discount_percent' => $paymentData['offer_percentage'],
                 'coupon_discount_amount' => $paymentData['coupon_discount_amount'],
-                'payment_method' => 'Midtrans',
+                'payment_method' => $paymentMethodName, // Use the dynamic payment method name
                 'payment_status' => 'paid',
                 'payable_amount' => $paymentData['payable_amount'],
                 'gateway_charge' => 0,
@@ -245,13 +263,18 @@ class MidtransController extends Controller
             ]);
 
             Cart::destroy();
+            // Clean up all session data related to the transaction
             Session::forget('midtrans_payment_attempt_' . $orderId);
+            Session::forget('coupon_code');
+            Session::forget('offer_percentage');
+            Session::forget('coupon_discount_amount');
+            Session::forget('payable_amount');
             
             $notification = ['messege' => __('Payment successful! Your order has been placed.'), 'alert-type' => 'success'];
             return redirect()->route('order-success')->with($notification);
 
         } else {
-            Log.warning("Finalize attempt for a non-successful transaction: $orderId. Status: " . ($status->transaction_status ?? 'N/A'));
+            Log::warning("Finalize attempt for a non-successful transaction: $orderId. Status: " . ($status->transaction_status ?? 'N/A'));
             return redirect()->route('order-fail')->with(['messege' => __('Payment was not successful.'), 'alert-type' => 'error']);
         }
     }
