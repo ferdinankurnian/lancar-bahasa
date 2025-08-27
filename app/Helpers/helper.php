@@ -123,7 +123,7 @@ function currency($price) {
     $currency_position = Session::get('currency_position');
 
     $price = $price * $currency_rate;
-    $price = number_format($price, 2, '.', ',');
+    $price = number_format($price, 0, '.', ',');
 
     if ($currency_position == 'before_price') {
         $price = $currency_icon . $price;

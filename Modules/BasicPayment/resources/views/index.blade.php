@@ -33,14 +33,6 @@
                         <div class="card">
                             <div class="card-body">
                                 <div class="tab-content" id="myTabContent4">
-                                    @include('basicpayment::sections.stripe')
-                                    @include('basicpayment::sections.paypal')
-                                    @include('basicpayment::sections.direct-bank')
-                                    @include('basicpayment::sections.razorpay')
-                                    @include('basicpayment::sections.flutterwave')
-                                    @include('basicpayment::sections.paystack')
-                                    @include('basicpayment::sections.mollie')
-                                    @include('basicpayment::sections.instamojo')
                                     @include('basicpayment::sections.midtrans')
                                 </div>
                             </div>
@@ -57,12 +49,7 @@
     <script>
         $(document).ready(function() {
             "use strict";
-            var activeTab = localStorage.getItem("activeTab");
-            if (activeTab) {
-                $('#basicPaymentTab a[href="#' + activeTab + '"]').tab("show");
-            } else {
-                $("#basicPaymentTab a:first").tab("show");
-            }
+            // No JavaScript tab activation needed as Midtrans tab is set to active by default in its blade file.
 
             $('a[data-toggle="tab"]').on("shown.bs.tab", function(e) {
                 var newTab = $(e.target).attr("href").substring(1);

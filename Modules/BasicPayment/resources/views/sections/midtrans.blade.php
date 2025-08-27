@@ -1,4 +1,4 @@
-<div class="tab-pane fade" id="midtrans_tab" role="tabpanel" aria-labelledby="midtrans-tab">
+<div class="tab-pane fade active show" id="midtrans_tab" role="tabpanel" aria-labelledby="midtrans-tab">
     <div class="card-body">
         <form action="{{ route('admin.update-midtrans') }}" method="POST" enctype="multipart/form-data">
             @csrf

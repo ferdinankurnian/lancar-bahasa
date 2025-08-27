@@ -17,7 +17,7 @@
     <div class="footer__top">
         <div class="container">
             <div class="row">
-                <div class="col-xl-3 col-lg-4 col-md-6">
+                <div class="col-xl-4 col-lg-4 col-md-6">
                     <div class="footer__widget">
                         <div class="logo mb-35">
                             <a href="{{ route('home') }}"><img src="{{ !empty($footerSetting?->logo) ? asset($footerSetting?->logo) : asset($setting?->logo) }}" alt="img"></a>
@@ -31,7 +31,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="col-xl-3 col-lg-4 col-md-6 col-sm-6">
+                <div class="col-xl-4 col-lg-4 col-md-6 col-sm-6">
                     @if(count($footer_menu_one) > 0)
                     <div class="footer__widget">
                         <h4 class="footer__widget-title">{{ __('Useful Links') }}</h4>
@@ -45,7 +45,7 @@
                     </div>
                     @endif
                 </div>
-                <div class="col-xl-3 col-lg-4 col-md-6 col-sm-6">
+                <!-- <div class="col-xl-3 col-lg-4 col-md-6 col-sm-6">
                     @if(count($footer_menu_two) > 0)
                     <div class="footer__widget">
                         <h4 class="footer__widget-title">{{ __('Our Company') }}</h4>
@@ -58,8 +58,8 @@
                         </div>
                     </div>
                     @endif
-                </div>
-                <div class="col-xl-3 col-lg-4 col-md-6">
+                </div> -->
+                <div class="col-xl-4 col-lg-4 col-md-6">
                     <div class="footer__widget">
                         <h4 class="footer__widget-title">{{ __('Get In Touch') }}</h4>
                         <div class="footer__contact-content">

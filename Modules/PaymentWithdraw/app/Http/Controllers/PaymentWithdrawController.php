@@ -5,6 +5,7 @@ namespace Modules\PaymentWithdraw\app\Http\Controllers;
 use App\Http\Controllers\Controller;
 use Auth;
 use Illuminate\Http\Request;
+use Modules\Order\app\Models\OrderItem;
 use Modules\PaymentWithdraw\app\Models\WithdrawMethod;
 use Modules\PaymentWithdraw\app\Models\WithdrawRequest;
 
@@ -46,7 +47,16 @@ class PaymentWithdrawController extends Controller
 
         $user = Auth::guard('web')->user();
 
-        $total_balance = 500; /** you need to calculat the total balance depend on your project logic */
+        $total_balance = OrderItem::whereHas('course', function ($query) use ($user) {
+            $query->where('instructor_id', $user->id);
+        })->whereHas('order', function ($query) {
+            $query->where('payment_status', 'paid');
+        })->get()->sum(function ($orderItem) {
+            $commission = ($orderItem->price * $orderItem->commission_rate) / 100;
+
+            return $orderItem->price - $commission;
+        });
+
         $total_withdraw = WithdrawRequest::where('user_id', $user->id)->sum('total_amount');
         $current_balance = $total_balance - $total_withdraw;
 
