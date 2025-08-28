@@ -17,7 +17,11 @@
                     <img src="{{ asset('uploads/website-images/question.png') }}" alt="">
                     <h6 class="mt-2">{{ __('Waiting on payment') }}</h6>
                     <p>{{ __("Hey! We're still waiting for your payment!") }}</p>
-                    <a href="{{ route('checkout.index') }}" class="btn btn-primary me-2">{{ __('Pay Now') }}</a>
+                    @if ($invoice_id)
+                        <a href="{{ route('midtrans.retry-payment', $invoice_id) }}" class="btn btn-primary me-2">{{ __('Pay Now') }}</a>
+                    @else
+                        <a href="{{ route('midtrans.retry-payment') }}" class="btn btn-primary me-2">{{ __('Pay Now') }}</a>
+                    @endif
                     <a href="{{ route('student.dashboard') }}" class="btn btn-primary">{{ __('Go to Dashboard') }}</a>
                 </div>     
             </div>

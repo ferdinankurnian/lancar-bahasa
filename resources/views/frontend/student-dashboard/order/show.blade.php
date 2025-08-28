@@ -129,8 +129,7 @@
                             </div>
                         </div>
                         <hr>
-                        <div class="text-md-right">
-
+                        <div style="margin-bottom: 1rem;" class="text-md-right">
                             <a target="_blank" href="{{ route('student.order.print-invoice', $order->id) }}" class="btn btn-warning btn-icon icon-left print-btn"><i class="fas fa-print"></i>
                                 {{ __('Print') }}</a>
                         </div>

@@ -162,7 +162,7 @@
                                                 <input data-translate="true" type="text" id="total_students"
                                                     name="total_student"
                                                     value="{{ $heroSection->getTranslation($code)?->content?->total_student }}"
-                                                    placeholder="{{ __('10k') }}" class="form-control">
+                                                    placeholder="{{ __('Numbers') }}" class="form-control">
                                                 @error('total_student')
                                                     <span class="text-danger">{{ $message }}</span>
                                                 @enderror
@@ -176,7 +176,7 @@
                                                 <input data-translate="true" type="text" id="total_instructors"
                                                     name="total_instructor"
                                                     value="{{ $heroSection->getTranslation($code)?->content?->total_instructor }}"
-                                                    placeholder="{{ __('10k') }}" class="form-control">
+                                                    placeholder="{{ __('Numbers') }}" class="form-control">
                                                 @error('total_instructor')
                                                     <span class="text-danger">{{ $message }}</span>
                                                 @enderror

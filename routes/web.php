@@ -259,7 +259,7 @@ Route::group(['middleware' => 'maintenance.mode'], function () {
         Route::get('/payment-addon-faild', [PaymentController::class, 'payment_addon_faild'])->name('payment-addon-faild');
         Route::get('order-completed', [PaymentController::class, 'order_success'])->name('order-success');
         Route::get('order-fail', [PaymentController::class, 'order_fail'])->name('order-fail');
-        Route::get('order-unfinish', [PaymentController::class, 'order_unfinish'])->name('order-unfinish');
+        Route::get('order-unfinish/{invoice_id?}', [PaymentController::class, 'order_unfinish'])->name('order-unfinish');
         Route::post('midtrans-callback-success', [PaymentController::class, 'midtransCallbackSuccess'])->name('midtrans.callback.success');
 
         Route::post('tinymce-upload-image', [TinymceImageUploadController::class, 'upload']);

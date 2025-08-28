@@ -105,7 +105,7 @@
 
                                         <div class="col-lg-6 {{ $code == $languages->first()->code ? '' : 'd-none' }}">
                                             <div class="form-group">
-                                                <label for="video_url">{{ __('Video url') }}<span class="text-danger">({{ __('leave blank for hide') }})</span></label>
+                                                <label for="video_url">{{ __('Video url') }}<span class="text-danger"> ({{ __('leave blank for hide') }})</span></label>
                                                 <input type="text" id="video_url" name="video_url"
                                                     value="{{ $aboutSection?->global_content?->video_url }}"
                                                     placeholder="{{ __('Video url') }}" class="form-control">
@@ -131,7 +131,7 @@
 
                                         <div class="col-md-6 {{ $code == $languages->first()->code ? '' : 'd-none' }}">
                                             <div class="form-group">
-                                                <label for="button_url">{{ __('Button url') }}</label>
+                                                <label for="button_url">{{ __('Button url') }}<span class="text-danger"> ({{ __('leave blank for hide') }})</span></label>
                                                 <input type="text" id="button_url" name="button_url"
                                                     value="{{ $aboutSection?->global_content?->button_url }}"
                                                     placeholder="{{ __('Button Url') }}" class="form-control">

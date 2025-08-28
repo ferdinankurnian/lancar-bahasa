@@ -39,7 +39,7 @@
             <div class="col-lg-4 col-md-4 col-sm-6">
                 <div class="dashboard__counter-item">
                     <div class="icon">
-                        <i class="flaticon-mortarboard"></i>
+                        <i class="fas fa-book-open"></i>
                     </div>
                     <div class="content">
                         <span class="count odometer" data-count="{{ $totalEnrolledCourses }}"></span>
@@ -51,7 +51,7 @@
             <div class="col-lg-4 col-md-4 col-sm-6">
                 <div class="dashboard__counter-item">
                     <div class="icon">
-                        <i class="flaticon-mortarboard"></i>
+                        <i class="fas fa-question-circle"></i>
                     </div>
                     <div class="content">
                         <span class="count odometer" data-count="{{ $totalQuizAttempts }}"></span>
@@ -63,7 +63,7 @@
             <div class="col-lg-4 col-md-4 col-sm-6">
                 <div class="dashboard__counter-item">
                     <div class="icon">
-                        <i class="flaticon-mortarboard"></i>
+                        <i class="fas fa-star"></i>
                     </div>
                     <div class="content">
                         <span class="count odometer" data-count="{{ $totalReviews }}"></span>
@@ -92,6 +92,7 @@
                                 <th>{{ __('Status') }}</th>
                                 <th>{{ __('Payment') }}</th>
                                 <th></th>
+                                <th></th>
                             </tr>
                         </thead>
                         <tbody>
@@ -100,7 +101,7 @@
                                 <tr>
                                     <td>{{ ++$index }}</td>
                                     <td>#{{ $order->invoice_id }}</td>
-                                    <td>{{ $order->paid_amount }} {{ $order->payable_currency }}</td>
+                                    <td>{{ currency($order->payable_amount) }}</td>
                                     <td>
                                         {{ $order->payment_method }}
                                     </td>
@@ -127,8 +128,12 @@
                                     </td>
 
                                     <td>
-                                        <a href="{{ route('student.order.show', $order->id) }}" class=""><i
-                                                class="fa fa-eye"></i></a>
+                                        <a href="{{ route('student.order.show', $order->id) }}"><i class="fa fa-eye"></i></a>
+                                    </td>
+                                    <td>
+                                        @if ($order->payment_status == 'pending')
+                                            <a style="width: fit-content; border-radius: 1rem; padding: 0 0.75rem; display: inline-grid;" href="{{ route('midtrans.retry-payment', $order->invoice_id) }}">{{ __('Pay') }}</a>
+                                        @endif
                                     </td>
                                 </tr>
                             @empty

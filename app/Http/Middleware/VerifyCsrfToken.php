@@ -12,6 +12,7 @@ class VerifyCsrfToken extends Middleware
      * @var array<int, string>
      */
     protected $except = [
-        'tinymce-upload-image','tinymce-delete-image'
+        'tinymce-upload-image','tinymce-delete-image',
+        'midtrans/notify'
     ];
 }

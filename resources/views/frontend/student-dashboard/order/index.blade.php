@@ -18,6 +18,7 @@
                                 <th>{{ __('Status') }}</th>
                                 <th>{{ __('Payment') }}</th>
                                 <th></th>
+                                <th></th>
                             </tr>
                         </thead>
                         <tbody>
@@ -26,7 +27,7 @@
                                 <tr>
                                     <td>{{ ++$index }}</td>
                                     <td>#{{ $order->invoice_id }}</td>
-                                    <td>{{ $order->paid_amount }} {{ $order->payable_currency }}</td>
+                                    <td>{{ $order->payable_amount }}</td>
                                     <td>
                                         {{ $order->payment_method }}
                                     </td>
@@ -53,8 +54,12 @@
                                     </td>
 
                                     <td>
-                                        <a href="{{ route('student.order.show', $order->id) }}" class=""><i
-                                                class="fa fa-eye"></i></a>
+                                        <a href="{{ route('student.order.show', $order->id) }}"><i class="fa fa-eye"></i></a>
+                                    </td>
+                                    <td>
+                                        @if ($order->payment_status == 'pending')
+                                            <a style="width: fit-content; border-radius: 1rem; padding: 0 0.75rem; display: inline-grid;" href="{{ route('midtrans.retry-payment', $order->invoice_id) }}">{{ __('Pay Now') }}</a>
+                                        @endif
                                     </td>
                                 </tr>
                             @empty

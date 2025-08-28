@@ -27,13 +27,15 @@
                         class="shape bg-dots rotateme">
                     <img src="{{ asset('frontend/img/banner/banner_shape02.png') }}" alt="shape"
                         class="shape small-shape tg-motion-effects3">
-
+                    @if ($hero?->content?->total_student)
                     <div class="about__enrolled students aos-init aos-animate" data-aos="fade-right"
                         data-aos-delay="200">
                         <p class="title"><span>{{ $hero?->content?->total_student }}</span>
                             {{ __('Enrolled Students') }}</p>
                         <img src="{{ asset($hero?->global_content?->enroll_students_image) }}" alt="img">
                     </div>
+                    @endif
+                    @if ($hero?->content?->total_instructor)
                     <div class="banner__student instructor aos-init aos-animate" data-aos="fade-left"
                         data-aos-delay="200">
                         <div class="icon">
@@ -45,6 +47,7 @@
                             <h4 class="title">{{ $hero?->content?->total_instructor }}</h4>
                         </div>
                     </div>
+                    @endif
                     <div class="banner__author">
                         <img src="{{ asset('frontend/img/banner/banner_shape02.svg') }}" alt="shape"
                             class="arrow-shape tg-motion-effects3">

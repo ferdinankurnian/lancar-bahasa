@@ -21,7 +21,7 @@
                                             <th>{{ __('SN') }}</th>
                                             <th>{{ __('User') }}</th>
                                             <th>{{ __('Order Id') }}</th>
-                                            <th>{{ __('Paid Amount') }}</th>
+                                            <th>{{ __('Bill Amount') }}</th>
                                             <th>{{ __('Gateway') }}</th>
                                             <th>{{ __('Status') }}</th>
                                             <th>{{ __('Payment') }}</th>
@@ -39,7 +39,7 @@
                                                     @endif
                                                 </td>
                                                 <td>#{{ $order->invoice_id }}</td>
-                                                <td>{{ $order->paid_amount }} {{ $order->payable_currency }}</td>
+                                                <td>{{ currency($order->payable_amount) }}</td>
                                                 <td>
                                                     {{ $order->payment_method }}
                                                 </td>

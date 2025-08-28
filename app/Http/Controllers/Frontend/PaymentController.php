@@ -297,8 +297,8 @@ class PaymentController extends Controller
        return view('frontend.pages.order-fail'); 
     }
 
-    function order_unfinish() {
-       return view('frontend.pages.order-unfinish'); 
+    function order_unfinish($invoice_id = null) {
+       return view('frontend.pages.order-unfinish', compact('invoice_id')); 
     }
 
     function handleMailSending(array $mailData)

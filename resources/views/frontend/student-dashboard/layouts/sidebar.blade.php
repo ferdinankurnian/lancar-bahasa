@@ -7,27 +7,27 @@
             
             <li class="{{ Route::is('student.dashboard') ? 'active' : '' }}">
                 <a href="{{ route('student.dashboard') }}">
-                    <i class="flaticon-mortarboard"></i>{{ __('Dashboard') }}</a>
+                    <i class="fas fa-tachometer-alt"></i>{{ __('Dashboard') }}</a>
             </li>
 
             <li class="{{ Route::is('student.orders.index') ? 'active' : '' }}">
                 <a href="{{ route('student.orders.index') }}">
-                    <i class="flaticon-mortarboard"></i>
+                    <i class="fas fa-shopping-cart"></i>
                     {{ __('Order History') }}
                 </a>
             </li>
 
             <li class="{{ Route::is('student.enrolled-courses') ? 'active' : '' }}">
                 <a href="{{ route('student.enrolled-courses') }}">
-                    <i class="flaticon-mortarboard"></i>{{ __('Enrolled Courses') }}</a>
+                    <i class="fas fa-book-open"></i>{{ __('Enrolled Courses') }}</a>
             </li>
             <li class="{{ Route::is('student.reviews.index') ? 'active' : '' }}">
                 <a href="{{ route('student.reviews.index') }}">
-                    <i class="flaticon-mortarboard"></i>{{ __('Reviews') }}</a>
+                    <i class="fas fa-star"></i>{{ __('Reviews') }}</a>
             </li>
             <li class="{{ Route::is('student.quiz-attempts') ? 'active' : '' }}">
                 <a href="{{ route('student.quiz-attempts') }}">
-                    <i class="flaticon-mortarboard"></i>{{ __('My Quiz Attempts') }}</a>
+                    <i class="fas fa-question-circle"></i>{{ __('My Quiz Attempts') }}</a>
             </li>
         </ul>
     </nav>
@@ -38,14 +38,14 @@
         <ul class="list-wrap">
             <li>
                 <a href="{{ route('student.setting.index') }}">
-                    <i class="flaticon-mortarboard"></i>
+                    <i class="fas fa-user-cog"></i>
                     {{ __('Profile Settings') }}
                 </a>
             </li>
             <li>
                 <a href="{{ route('logout') }}"
                     onclick="event.preventDefault(); $('#logout-form').trigger('submit');">
-                    <i class="flaticon-mortarboard"></i>
+                    <i class="fas fa-sign-out-alt"></i>
                     {{ __('Logout') }}
                 </a>
             </li>

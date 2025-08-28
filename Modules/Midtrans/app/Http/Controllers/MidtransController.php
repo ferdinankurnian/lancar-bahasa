@@ -23,6 +23,7 @@ use Modules\GlobalSetting\app\Models\EmailTemplate;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\DefaultMail;
 use App\Jobs\DefaultMailJob;
+use App\Models\User;
 
 class MidtransController extends Controller
 {
@@ -95,22 +96,39 @@ class MidtransController extends Controller
     {
         $user = Auth::user();
         $payable_amount = Session::get('payable_amount', (int) Cart::total(2, '.', ''));
-        $paymentAttemptId = 'INV-' . strtoupper(Str::random(10));
+        $invoiceId = 'INV-' . strtoupper(Str::random(10));
 
-        $paymentData = [
-            'cart_content' => Cart::content(),
-            'cart_total' => Cart::total(2, '.', ''),
-            'payable_amount' => $payable_amount,
+        // Create the Order
+        $order = Order::create([
+            'invoice_id' => $invoiceId,
+            'buyer_id' => $user->id,
+            'status' => 'pending',
             'has_coupon' => Session::has('coupon_code') ? 1 : 0,
             'coupon_code' => Session::get('coupon_code'),
-            'offer_percentage' => Session::get('offer_percentage'),
+            'coupon_discount_percent' => Session::get('offer_percentage'),
             'coupon_discount_amount' => Session::get('coupon_discount_amount'),
+            'payment_method' => '-',
+            'payment_status' => 'pending',
+            'payable_amount' => $payable_amount,
+            'gateway_charge' => 0,
+            'payable_with_charge' => $payable_amount,
+            'paid_amount' => 0,
+            'conversion_rate' => 1,
             'payable_currency' => getSessionCurrency(),
+            'payment_details' => null,
+            'transaction_id' => null,
             'commission_rate' => Cache::get('setting')->commission_rate,
-            'user_id' => $user->id,
-        ];
+        ]);
 
-        Session::put('midtrans_payment_attempt_' . $paymentAttemptId, $paymentData);
+        // Create OrderItems
+        foreach (Cart::content() as $cartItem) {
+            OrderItem::create([
+                'order_id' => $order->id,
+                'price' => $cartItem->price,
+                'course_id' => $cartItem->id,
+                'commission_rate' => $order->commission_rate,
+            ]);
+        }
 
         $itemDetails = [];
         foreach (Cart::content() as $item) {
@@ -133,7 +151,7 @@ class MidtransController extends Controller
 
         $params = [
             'transaction_details' => [
-                'order_id' => $paymentAttemptId,
+                'order_id' => $order->invoice_id,
                 'gross_amount' => $payable_amount,
             ],
             'customer_details' => [
@@ -145,6 +163,11 @@ class MidtransController extends Controller
 
         try {
             $snapToken = Snap::getSnapToken($params);
+
+            // If Snap Token is successfully created, clear the cart and store pending order id
+            Cart::destroy();
+            Session::put('pending_order_id', $order->invoice_id);
+
             return response()->json(['snap_token' => $snapToken]);
         } catch (\Exception $e) {
             Log::error('Midtrans Snap Token Error: ' . $e->getMessage());
@@ -165,38 +188,98 @@ class MidtransController extends Controller
             $status = Transaction::status($orderId);
         } catch (\Exception $e) {
             Log::error("Midtrans status check failed for order_id $orderId: " . $e->getMessage());
+            // Even if status check fails, we can check our own DB, as the webhook might have already processed it.
+            $order = Order::where('invoice_id', $orderId)->first();
+            if ($order && $order->payment_status === 'paid') {
+                Cart::destroy();
+                return redirect()->route('order-success')->with(['messege' => __('Payment successful! Your order has been placed.'), 'alert-type' => 'success']);
+            }
             return redirect()->route('order-fail')->with(['messege' => __('Payment verification failed.'), 'alert-type' => 'error']);
         }
 
         $isSuccess = false;
         if (isset($status->transaction_status)) {
-            if ($status->transaction_status == 'capture' && $status->fraud_status == 'accept') {
-                $isSuccess = true;
-            } elseif ($status->transaction_status == 'settlement') {
+            if (($status->transaction_status == 'capture' && $status->fraud_status == 'accept') || $status->transaction_status == 'settlement') {
                 $isSuccess = true;
             }
         }
 
+        // Clean up session and cart regardless of what our DB says, as long as Midtrans says it's a success.
         if ($isSuccess) {
-            // Prevent duplicate processing
-            if (Order::where('invoice_id', $orderId)->exists()) {
-                Log::warning("Finalize attempt for an already processed order: $orderId");
-                Cart::destroy(); // Still destroy the cart
-                return redirect()->route('order-success');
-            }
+            Cart::destroy();
+            Session::forget('coupon_code');
+            Session::forget('offer_percentage');
+            Session::forget('coupon_discount_amount');
+            Session::forget('payable_amount');
+            Session::forget('pending_order_id');
+            
+            $notification = ['messege' => __('Payment successful! Your order has been placed.'), 'alert-type' => 'success'];
+            return redirect()->route('order-success')->with($notification);
 
-            $paymentData = Session::get('midtrans_payment_attempt_' . $orderId);
+        } else {
+            Log::warning("Finalize attempt for a non-successful transaction: $orderId. Status: " . ($status->transaction_status ?? 'N/A'));
+            return redirect()->route('order-fail')->with(['messege' => __('Payment was not successful.'), 'alert-type' => 'error']);
+        }
+    }
 
-            if (!$paymentData) {
-                Log::error("Session data for order_id $orderId not found during finalize.");
-                return redirect()->route('order-fail')->with(['messege' => __('Your session has expired. Please try again.'), 'alert-type' => 'error']);
-            }
+    public function notify(Request $request)
+    {
+        $payload = $request->all();
+        Log::info('Midtrans notification received: ' . json_encode($payload));
 
-            $user = Auth::loginUsingId($paymentData['user_id']);
+        // 1. Get Midtrans server key from the config loaded in constructor
+        $serverKey = Config::$serverKey;
 
-            // Get specific payment method name
-            $paymentType = $status->payment_type ?? 'midtrans';
-            $paymentMethodName = match ($paymentType) {
+        // 2. Get data from payload
+        $orderId = $payload['order_id'] ?? null;
+        $statusCode = $payload['status_code'] ?? null;
+        $grossAmount = $payload['gross_amount'] ?? null;
+        $signatureKey = $payload['signature_key'] ?? null;
+        $transactionStatus = $payload['transaction_status'] ?? null;
+
+        // 3. Verify signature
+        if (!$orderId || !$statusCode || !$grossAmount || !$signatureKey) {
+            Log::error('Midtrans notification: Missing required fields.');
+            return response('Invalid payload', 400);
+        }
+        
+        $expectedSignatureKey = hash('sha512', $orderId . $statusCode . $grossAmount . $serverKey);
+        if ($signatureKey !== $expectedSignatureKey) {
+            Log::error("Midtrans notification signature mismatch for order_id: $orderId");
+            return response('Invalid signature', 403);
+        }
+
+        // 4. Find the order
+        $order = Order::where('invoice_id', $orderId)->first();
+        if (!$order) {
+            Log::error("Midtrans notification: Order with invoice_id $orderId not found.");
+            return response('Order not found', 404);
+        }
+
+        // 5. Check for duplicate processing
+        if ($order->payment_status === 'paid') {
+            Log::warning("Midtrans notification: Order $orderId already processed.");
+            return response('Order already processed', 200);
+        }
+
+        // 6. Handle transaction status
+        $isSuccess = false;
+        if ($transactionStatus == 'capture' && ($payload['fraud_status'] ?? '') == 'accept') {
+            $isSuccess = true;
+        } elseif ($transactionStatus == 'settlement') {
+            $isSuccess = true;
+        }
+
+        if ($isSuccess) {
+            // 7a. Update Order
+            $order->payment_status = 'paid';
+            $order->status = 'completed';
+            $order->transaction_id = $payload['transaction_id'];
+            $order->paid_amount = $payload['gross_amount'];
+            $order->payment_details = json_encode($payload);
+            
+            $paymentType = $payload['payment_type'] ?? 'midtrans';
+            $order->payment_method = match ($paymentType) {
                 'credit_card' => 'Credit Card',
                 'gopay' => 'GoPay',
                 'shopeepay' => 'ShopeePay',
@@ -211,81 +294,47 @@ class MidtransController extends Controller
                 'indomaret' => 'Indomaret',
                 default => ucwords(str_replace('_', ' ', $paymentType)),
             };
+            
+            $order->save();
 
-            $order = Order::create([
-                'invoice_id' => $orderId,
-                'buyer_id' => $paymentData['user_id'],
-                'status' => 'completed',
-                'has_coupon' => $paymentData['has_coupon'],
-                'coupon_code' => $paymentData['coupon_code'],
-                'coupon_discount_percent' => $paymentData['offer_percentage'],
-                'coupon_discount_amount' => $paymentData['coupon_discount_amount'],
-                'payment_method' => $paymentMethodName, // Use the dynamic payment method name
-                'payment_status' => 'paid',
-                'payable_amount' => $paymentData['payable_amount'],
-                'gateway_charge' => 0,
-                'payable_with_charge' => $paymentData['payable_amount'],
-                'paid_amount' => $status->gross_amount,
-                'conversion_rate' => 1,
-                'payable_currency' => $paymentData['payable_currency'],
-                'payment_details' => json_encode($status),
-                'transaction_id' => $status->transaction_id,
-                'commission_rate' => $paymentData['commission_rate'],
-            ]);
+            // 7b. Create Enrollment & Pay Instructor
+            foreach ($order->orderItems as $item) {
+                // Check if enrollment already exists to be idempotent
+                Enrollment::firstOrCreate(
+                    ['user_id' => $order->buyer_id, 'course_id' => $item->course_id],
+                    ['order_id' => $order->id, 'has_access' => 1]
+                );
 
-            foreach ($paymentData['cart_content'] as $item) {
-                OrderItem::create([
-                    'order_id' => $order->id,
-                    'price' => $item->price,
-                    'course_id' => $item->id,
-                    'commission_rate' => $paymentData['commission_rate'],
-                ]);
-                Enrollment::create([
-                    'order_id' => $order->id,
-                    'user_id' => $paymentData['user_id'],
-                    'course_id' => $item->id,
-                    'has_access' => 1,
-                ]);
-                $instructor = Course::find($item->id)->instructor;
+                $instructor = Course::find($item->course_id)->instructor;
                 if ($instructor) {
                     $commissionAmount = $item->price * ($order->commission_rate / 100);
                     $amountAfterCommission = $item->price - $commissionAmount;
+                    // To make this idempotent, we should check if the wallet has already been credited for this order.
+                    // For simplicity, we assume the duplicate check at the start is enough.
                     $instructor->increment('wallet_balance', $amountAfterCommission);
                 }
             }
 
-            $this->handleMailSending([
-                'email' => $user->email,
-                'name' => $user->name,
-                'order_id' => $order->invoice_id,
-                'paid_amount' => $order->paid_amount . ' ' . $order->payable_currency,
-                'payment_method' => $order->payment_method
-            ]);
+            // 7c. Send Email
+            $user = User::find($order->buyer_id);
+            if ($user) {
+                $this->handleMailSending([
+                    'email' => $user->email,
+                    'name' => $user->name,
+                    'order_id' => $order->invoice_id,
+                    'paid_amount' => currency($order->paid_amount),
+                    'payment_method' => $order->payment_method
+                ]);
+            }
 
-            Cart::destroy();
-            // Clean up all session data related to the transaction
-            Session::forget('midtrans_payment_attempt_' . $orderId);
-            Session::forget('coupon_code');
-            Session::forget('offer_percentage');
-            Session::forget('coupon_discount_amount');
-            Session::forget('payable_amount');
-            
-            $notification = ['messege' => __('Payment successful! Your order has been placed.'), 'alert-type' => 'success'];
-            return redirect()->route('order-success')->with($notification);
-
-        } else {
-            Log::warning("Finalize attempt for a non-successful transaction: $orderId. Status: " . ($status->transaction_status ?? 'N/A'));
-            return redirect()->route('order-fail')->with(['messege' => __('Payment was not successful.'), 'alert-type' => 'error']);
+        } else if (in_array($transactionStatus, ['deny', 'expire', 'cancel', 'failure'])) {
+            // Handle failed statuses
+            $order->payment_status = $transactionStatus;
+            $order->status = 'failed';
+            $order->save();
+            Log::info("Midtrans notification: Order {$order->invoice_id} status updated to $transactionStatus.");
         }
-    }
 
-    public function notify(Request $request)
-    {
-        // This webhook now serves as a secondary confirmation or for backend status updates.
-        // The primary order creation logic is in finalizeTransaction to ensure it happens within the user's session.
-        Log::info('Midtrans notification received: ' . json_encode($request->all()));
-        // Optional: You could add logic here to update an order's status to 'webhook_confirmed',
-        // but for now, we will keep it simple and just log the notification.
         return response('OK', 200);
     }
 
@@ -324,6 +373,88 @@ class MidtransController extends Controller
             Log::info('Order completion email sent to ' . $mailData['email']);
         } catch (\Exception $e) {
             Log::error('Failed to send order completion email: ' . $e->getMessage());
+        }
+    }
+
+    public function retryPayment(Request $request, $invoice_id = null)
+    {
+        // The invoice_id from the URL takes precedence. 
+        // If it's null, fall back to the one stored in the session from the initial failed attempt.
+        $orderId = $invoice_id ?? Session::get('pending_order_id');
+
+        if (!$orderId) {
+            // This happens if the session expires and they try to access the generic retry URL
+            return redirect()->route('student.orders.index')->with(['messege' => __('No pending order found to retry.'), 'alert-type' => 'error']);
+        }
+
+        $order = Order::where('invoice_id', $orderId)
+                        ->where('payment_status', 'pending')
+                        ->first();
+
+        if (!$order) {
+            return redirect()->route('student.orders.index')->with(['messege' => __('Pending order not found or already paid.'), 'alert-type' => 'error']);
+        }
+
+        // Security Check: Ensure the authenticated user owns this order
+        if ($order->buyer_id !== Auth::id()) {
+            return redirect()->route('student.orders.index')->with(['messege' => __('You are not authorized to pay for this order.'), 'alert-type' => 'error']);
+        }
+
+        $user = User::find($order->buyer_id);
+
+        $itemDetails = [];
+        foreach ($order->orderItems as $item) {
+            $courseTitle = $item->course->title ?? 'Course'; 
+            $itemDetails[] = [
+                'id' => $item->course_id,
+                'price' => $item->price,
+                'quantity' => 1,
+                'name' => $courseTitle,
+            ];
+        }
+
+        if ($order->has_coupon) {
+            $itemDetails[] = [
+                'id' => 'COUPON_' . $order->coupon_code,
+                'price' => -(int)$order->coupon_discount_amount,
+                'quantity' => 1,
+                'name' => 'Coupon Discount'
+            ];
+        }
+
+        $params = [
+            'transaction_details' => [
+                'order_id' => $order->invoice_id,
+                'gross_amount' => $order->payable_amount,
+            ],
+            'customer_details' => [
+                'first_name' => $user->name ?? 'Guest',
+                'email' => $user->email ?? 'guest@example.com',
+            ],
+            'item_details' => $itemDetails,
+        ];
+
+        try {
+            $snapToken = Snap::getSnapToken($params);
+
+            $midtrans_info = MidtransSetting::get();
+            $midtrans_payment_settings = [];
+            foreach ($midtrans_info as $item) {
+                $midtrans_payment_settings[$item->key] = $item->value;
+            }
+            $midtrans_credentials = (object) [
+                'client_key' => $midtrans_payment_settings['client_key'] ?? '',
+                'is_production' => filter_var($midtrans_payment_settings['is_production'] ?? false, FILTER_VALIDATE_BOOLEAN),
+            ];
+
+            return view('midtrans::retry-payment', [
+                'snap_token' => $snapToken,
+                'midtrans_credentials' => $midtrans_credentials,
+                'invoice_id' => $order->invoice_id
+            ]);
+        } catch (\Exception $e) {
+            Log::error('Midtrans Snap Token Error on retry: ' . $e->getMessage());
+            return redirect()->route('student.orders.index')->with(['messege' => __('Failed to create payment token. Please try again.'), 'alert-type' => 'error']);
         }
     }
 }

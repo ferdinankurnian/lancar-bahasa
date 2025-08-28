@@ -21,3 +21,8 @@ Route::get('/midtrans/finalize', [MidtransController::class, 'finalizeTransactio
 
 // Route for server-to-server notification callback from Midtrans
 Route::post('/midtrans/notify', [MidtransController::class, 'notify'])->name('midtrans.notify');
+
+// Route for retrying a pending payment
+Route::get('/midtrans/retry-payment/{invoice_id?}', [MidtransController::class, 'retryPayment'])
+    ->name('midtrans.retry-payment')
+    ->middleware('auth');
