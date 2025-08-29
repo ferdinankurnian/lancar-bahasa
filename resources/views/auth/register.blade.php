@@ -13,7 +13,7 @@
                 <div class="col-xl-6 col-lg-8">
                     <div class="singUp-wrap">
                         <h2 class="title">{{ __('Create Your Account') }}</h2>
-                        <p>{{ __('Hey there! Ready to join the party? We just need a few details from you to get') }}<br>{{ __('started Lets do this!') }}
+                        <p>{{ __('Hey there! Ready to join the party? We just need a few details from you to get') }}
                         </p>
                         @if($setting->google_login_status == 'active')
                         <div class="account__social">
