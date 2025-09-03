@@ -40,7 +40,7 @@ class LearningController extends Controller {
 
         $alreadyWatchedLectures = CourseProgress::where('user_id', userAuth()->id)
             ->where('course_id', $course->id)
-            ->where('type', 'lesson')
+            ->whereIn('type', ['lesson', 'document', 'live'])
             ->where('watched', 1)
             ->pluck('lesson_id')
             ->toArray();
@@ -195,7 +195,7 @@ class LearningController extends Controller {
     function quizIndex(string $id) {
         $attempt = QuizResult::where('user_id', userAuth()->id)->where('quiz_id', $id)->count();
         $quiz = Quiz::withCount('questions')->findOrFail($id);
-        if ($attempt >= $quiz->attempt) {
+        if ($quiz->attempt > 0 && $attempt >= $quiz->attempt) {
             return redirect()->route('student.learning.index', Session::get('course_slug'))->with(['alert-type' => 'error', 'message' => __('You reached maximum attempt')]);
         }
 
@@ -226,6 +226,14 @@ class LearningController extends Controller {
             'user_grade' => $grad,
             'status'     => $grad >= $quiz->pass_mark ? 'pass' : 'failed',
         ]);
+
+        // Mark quiz as complete
+        $this->makeLessonComplete(new Request([
+            'lessonId' => $id,
+            'status'   => 1,
+            'type'     => 'quiz'
+        ]));
+
         return redirect()->route('student.quiz.result', ['id' => $id, 'result_id' => $quizResult->id]);
     }
 
@@ -234,7 +242,9 @@ class LearningController extends Controller {
         $quiz = Quiz::withCount('questions')->findOrFail($id);
         $quizResult = QuizResult::findOrFail($resultId);
 
-        return view('frontend.pages.learning-player.quiz-result', compact('quiz', 'attempt', 'quizResult'));
+        $can_try_again = ($quiz->attempt == 0 || $quiz->attempt == null) || ($attempt < $quiz->attempt);
+
+        return view('frontend.pages.learning-player.quiz-result', compact('quiz', 'attempt', 'quizResult', 'can_try_again'));
     }
 
     function addReview(Request $request) {

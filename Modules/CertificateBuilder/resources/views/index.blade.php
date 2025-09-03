@@ -85,7 +85,7 @@
                     </div>
                     <div class="col-lg-8">
                         <div class="card">
-                            
+
                             <div class="card-body">
                                 <p class="text-center text-danger">{{ __('Background size will be ( 930px * 600px )') }}
                                 </p>
@@ -185,6 +185,8 @@
             background: rgb(231, 231, 231);
             position: relative;
             background-image: url({{ asset($certificate->background) }});
+            background-size: 100% 100%;
+            background-repeat: no-repeat;
         }
 
         .draggable-element {
@@ -206,13 +208,18 @@
         }
 
         #description {
-            font-size: 16px;
+            font-size: 15px;
             color: black;
             text-align: center;
             font-weight: inherit;
             margin-left: 100px;
             margin-right: 100px;
 
+        }
+
+        #signature img {
+            width: 155px;
+            height: auto;
         }
     </style>
 @endpush

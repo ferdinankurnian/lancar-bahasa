@@ -16,7 +16,7 @@ class CertificateUpdateRequest extends FormRequest
             'title' => ['nullable', 'string', 'max:255'],
             'sub_title' => ['nullable', 'string', 'max:255'],
             'description' => ['nullable', 'string', 'max:600'],
-            'signature' => ['nullable', 'image', 'max:3000', 'dimensions:max_width=500,min_height=10'],   
+            'signature' => ['nullable', 'image', 'max:3000'],   
         ];
     }
 

@@ -1,0 +1,44 @@
+{
+    "noto sans": {
+        "100_italic": "\/mnt\/data\/Projects\/lancar-bahasa\/main_files\/vendor\/dompdf\/dompdf\/lib\/fonts\/noto_sans_100_italic_284a56b1eb7241b30edc94c66a688c38",
+        "200_italic": "\/mnt\/data\/Projects\/lancar-bahasa\/main_files\/vendor\/dompdf\/dompdf\/lib\/fonts\/noto_sans_200_italic_43d1320e78dc153d71c2064157d2055f",
+        "300_italic": "\/mnt\/data\/Projects\/lancar-bahasa\/main_files\/vendor\/dompdf\/dompdf\/lib\/fonts\/noto_sans_300_italic_aed2046597066212985ac081d094d4fa",
+        "italic": "\/mnt\/data\/Projects\/lancar-bahasa\/main_files\/vendor\/dompdf\/dompdf\/lib\/fonts\/noto_sans_italic_e86afeb607b6a6a42fcda72913e587d0",
+        "500_italic": "\/mnt\/data\/Projects\/lancar-bahasa\/main_files\/vendor\/dompdf\/dompdf\/lib\/fonts\/noto_sans_500_italic_6de75e45d6b4a3873c70bad8a35e2a1b",
+        "600_italic": "\/mnt\/data\/Projects\/lancar-bahasa\/main_files\/vendor\/dompdf\/dompdf\/lib\/fonts\/noto_sans_600_italic_bb944e24e24a6763123233f04b9380e8",
+        "bold_italic": "\/mnt\/data\/Projects\/lancar-bahasa\/main_files\/vendor\/dompdf\/dompdf\/lib\/fonts\/noto_sans_bold_italic_e89255d436c91478cd2fb0a32bb6e52a",
+        "800_italic": "\/mnt\/data\/Projects\/lancar-bahasa\/main_files\/vendor\/dompdf\/dompdf\/lib\/fonts\/noto_sans_800_italic_f9f8b8a2bfb2095ed63062f14ed8f8c4",
+        "900_italic": "\/mnt\/data\/Projects\/lancar-bahasa\/main_files\/vendor\/dompdf\/dompdf\/lib\/fonts\/noto_sans_900_italic_3e389c35a48a4c356e766e018b7987a0",
+        "100": "\/mnt\/data\/Projects\/lancar-bahasa\/main_files\/vendor\/dompdf\/dompdf\/lib\/fonts\/noto_sans_100_e83a8c6418478337a00806273acd767e",
+        "200": "\/mnt\/data\/Projects\/lancar-bahasa\/main_files\/vendor\/dompdf\/dompdf\/lib\/fonts\/noto_sans_200_b46c12922bcb63bbc75f1516789f50fd",
+        "300": "\/mnt\/data\/Projects\/lancar-bahasa\/main_files\/vendor\/dompdf\/dompdf\/lib\/fonts\/noto_sans_300_dade5483f138cae71159077d2a74811e",
+        "normal": "\/mnt\/data\/Projects\/lancar-bahasa\/main_files\/vendor\/dompdf\/dompdf\/lib\/fonts\/noto_sans_normal_e1392f115d5e43f2ce0d82bb405a7921",
+        "500": "\/mnt\/data\/Projects\/lancar-bahasa\/main_files\/vendor\/dompdf\/dompdf\/lib\/fonts\/noto_sans_500_6eb8ad0e602c3d4f485d5ae5ca048f52",
+        "600": "\/mnt\/data\/Projects\/lancar-bahasa\/main_files\/vendor\/dompdf\/dompdf\/lib\/fonts\/noto_sans_600_3a45f9ab1d611c5d1865b46be1cb1214",
+        "bold": "\/mnt\/data\/Projects\/lancar-bahasa\/main_files\/vendor\/dompdf\/dompdf\/lib\/fonts\/noto_sans_bold_4e0074f026ba13a97cfa934f603e38f1",
+        "800": "\/mnt\/data\/Projects\/lancar-bahasa\/main_files\/vendor\/dompdf\/dompdf\/lib\/fonts\/noto_sans_800_b462d563bcc2fc238e5ca5728b63f352",
+        "900": "noto_sans_900_83030a929225f39990513ea8ccb91255"
+    },
+    "noto sans arabic": {
+        "100": "\/mnt\/data\/Projects\/lancar-bahasa\/main_files\/vendor\/dompdf\/dompdf\/lib\/fonts\/noto_sans_arabic_100_5c5b41d1cf2f0a738388345b883f8662",
+        "200": "\/mnt\/data\/Projects\/lancar-bahasa\/main_files\/vendor\/dompdf\/dompdf\/lib\/fonts\/noto_sans_arabic_200_0369b016e5539b924440bd220ec99489",
+        "300": "\/mnt\/data\/Projects\/lancar-bahasa\/main_files\/vendor\/dompdf\/dompdf\/lib\/fonts\/noto_sans_arabic_300_373ad120e3fec11a77421a543cf7dd4e",
+        "normal": "\/mnt\/data\/Projects\/lancar-bahasa\/main_files\/vendor\/dompdf\/dompdf\/lib\/fonts\/noto_sans_arabic_normal_933e23d117a4ac5ef348d5e2aa3fe2c4",
+        "500": "\/mnt\/data\/Projects\/lancar-bahasa\/main_files\/vendor\/dompdf\/dompdf\/lib\/fonts\/noto_sans_arabic_500_7ad7a2c813d84dc843e24802df5ac9a2",
+        "600": "\/mnt\/data\/Projects\/lancar-bahasa\/main_files\/vendor\/dompdf\/dompdf\/lib\/fonts\/noto_sans_arabic_600_e5adcff27d43fb32dea54e37ba4f5ece",
+        "bold": "\/mnt\/data\/Projects\/lancar-bahasa\/main_files\/vendor\/dompdf\/dompdf\/lib\/fonts\/noto_sans_arabic_bold_a529ca505f1f6931ca251443987e64a4",
+        "800": "\/mnt\/data\/Projects\/lancar-bahasa\/main_files\/vendor\/dompdf\/dompdf\/lib\/fonts\/noto_sans_arabic_800_b7fb8e616d70c382317451b849b7b090",
+        "900": "noto_sans_arabic_900_8023b4069dd77d796270a3f038f2134b"
+    },
+    "noto sans bengali": {
+        "100": "\/mnt\/data\/Projects\/lancar-bahasa\/main_files\/vendor\/dompdf\/dompdf\/lib\/fonts\/noto_sans_bengali_100_39c5cc6dc7b98c1c0ed0c12569d12a9f",
+        "200": "\/mnt\/data\/Projects\/lancar-bahasa\/main_files\/vendor\/dompdf\/dompdf\/lib\/fonts\/noto_sans_bengali_200_cb9a67419e81d4106b3978c3034ce519",
+        "300": "\/mnt\/data\/Projects\/lancar-bahasa\/main_files\/vendor\/dompdf\/dompdf\/lib\/fonts\/noto_sans_bengali_300_3d80e1f7b1ba5db131a4ebc57e55947b",
+        "normal": "\/mnt\/data\/Projects\/lancar-bahasa\/main_files\/vendor\/dompdf\/dompdf\/lib\/fonts\/noto_sans_bengali_normal_1d5e2be47a69670aec3f0f4cfd77ce63",
+        "500": "\/mnt\/data\/Projects\/lancar-bahasa\/main_files\/vendor\/dompdf\/dompdf\/lib\/fonts\/noto_sans_bengali_500_7516bd98f8336977854475df7863561b",
+        "600": "\/mnt\/data\/Projects\/lancar-bahasa\/main_files\/vendor\/dompdf\/dompdf\/lib\/fonts\/noto_sans_bengali_600_4d4066ab200486af5de19709f821ba53",
+        "bold": "\/mnt\/data\/Projects\/lancar-bahasa\/main_files\/vendor\/dompdf\/dompdf\/lib\/fonts\/noto_sans_bengali_bold_a45be1c993ad4735a06c2f650572d722",
+        "800": "\/mnt\/data\/Projects\/lancar-bahasa\/main_files\/vendor\/dompdf\/dompdf\/lib\/fonts\/noto_sans_bengali_800_260b80f3d41542f67c76c87245c3eb43",
+        "900": "noto_sans_bengali_900_decea29245490eac482db27d9a665b77"
+    }
+}

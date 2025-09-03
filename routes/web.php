@@ -284,3 +284,18 @@ require __DIR__ . '/admin.php';
 Route::get('/test-route', function () {
     return 'Test route is working!';
 })->name('test.route');
+
+Route::get('/certificate-preview', function () {
+        $certificate = (object)[
+            'title' => 'Certificate of Completion',
+            'sub_title' => 'This is to certify that',
+            'description' => 'John Doe has successfully completed the course on Laravel Development with a score of 95%.',
+            'background' => 'global/img/certificate-bg.jpg', // Example background
+            'signature' => 'global/img/signature.png', // Example signature
+        ];
+        // Empty collection for certificate items as styling is manual
+        $certificateItems = collect([]);
+        $course = (object)['title' => 'Laravel Development']; // Dummy course
+        $completed_date = 'September 3, 2025'; // Dummy date
+        return view('frontend.student-dashboard.certificate.index', compact('certificate', 'certificateItems', 'course', 'completed_date'));
+    });

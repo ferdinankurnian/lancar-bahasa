@@ -13,7 +13,7 @@
                         <i class="flaticon-mortarboard"></i>
                     </div>
                     <div class="content">
-                        <span class="count" data-count="">{{ currency(userAuth()->wallet_balance) }}</span>
+                        <span style="font-size: 1.75rem;" class="count" data-count="">{{ currency(userAuth()->wallet_balance) }}</span>
                         <p>{{ __('Current Balance') }}</p>
                     </div>
                 </div>
@@ -35,7 +35,7 @@
                         <i class="flaticon-mortarboard"></i>
                     </div>
                     <div class="content">
-                        <span class="count">{{ currency($totalWithdraw) }}</span>
+                        <span style="font-size: 1.75rem;" class="count">{{ currency($totalWithdraw) }}</span>
                         <p>{{ __('Total Payout') }}</p>
                     </div>
                 </div>

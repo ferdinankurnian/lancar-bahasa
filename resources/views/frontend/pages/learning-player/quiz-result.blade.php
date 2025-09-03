@@ -31,6 +31,9 @@
                                 @endif
 
                                 <div class="mt-3 mb-3">
+                                    @if ($can_try_again)
+                                        <a href="{{ route('student.quiz.index', ['id' => $quiz->id]) }}" class="btn btn-primary me-2">{{ __('Try Again') }}</a>
+                                    @endif
                                     @if (Session::has('course_slug'))
                                         <a href="{{ route('student.learning.index', Session::get('course_slug')) }}"
                                             class="btn">{{ __('Go back to course page') }}</a>
@@ -61,7 +64,7 @@
                                 <img src="{{ asset('uploads/website-images/test.png') }}">
                             </div>
                             <div class="card-body">
-                                <h6 class="card-title count">{{ $attempt }}/{{ $quiz->attempt }}</h6>
+                                <h6 class="card-title count">{{ $attempt }}/{{ $quiz->attempt > 0 ? $quiz->attempt : '∞' }}</h6>
                                 <p class="card-text">{{ __('Attempts') }}</p>
                             </div>
                         </div>

@@ -7,6 +7,33 @@ const placeholder = `<div class="player-placeholder">
 </div>
 </div>`;
 
+function makeLessonComplete(lessonId, type, status) {
+    $.ajax({
+        method: "POST",
+        url: base_url + "/student/learning/make-lesson-complete",
+        data: {
+            _token: csrf_token,
+            lessonId: lessonId,
+            status: status,
+            type: type,
+        },
+        success: function (data) {
+            if (data.status == "success") {
+                toastr.success(data.message);
+            } else if (data.status == "error") {
+                toastr.error(data.message);
+            }
+        },
+        error: function (xhr, status, error) {
+            let errors = xhr.responseJSON.errors;
+            $.each(errors, function (key, value) {
+                toastr.error(value);
+            });
+        },
+    });
+}
+
+
 function extractGoogleDriveVideoId(url) {
     // Regular expression to match Google Drive video URLs
     var googleDriveRegex =
@@ -194,8 +221,21 @@ $(document).ready(function () {
 
                 // Initializing the player
                 if (document.getElementById("vid1")) {
-                    videojs("vid1").ready(function () {
+                    let player = videojs("vid1");
+                    let lessonCompleted = false;
+
+                    player.ready(function () {
                         this.play();
+
+                        this.on('timeupdate', function () {
+                            let percentage = (this.currentTime() / this.duration()) * 100;
+                            if (percentage >= 80 && !lessonCompleted) {
+                                lessonCompleted = true;
+                                let lessonId = $("meta[name='lesson-id']").attr("content");
+                                let type = $('.lesson-item.active').attr('data-type');
+                                makeLessonComplete(lessonId, type, 1);
+                            }
+                        });
                     });
                 }
 
@@ -206,38 +246,25 @@ $(document).ready(function () {
 
                 // load qna's
                 fetchQuestions(courseId, lessonId, 1, true);
+
+                // Update navigator state
+                updateNavigator();
+
+                // Add completion handler for documents
+                if (type === 'document') {
+                    const checkbox = $(".lesson-completed-checkbox[data-lesson-id='" + lessonId + "'][data-type='document']");
+                    if (checkbox.length > 0 && !checkbox.is(':checked')) {
+                        makeLessonComplete(lessonId, type, 1);
+                    }
+                }
             },
             error: function (xhr, status, error) { },
         });
     });
 
-    $(".lesson-completed-checkbox").on("click", function () {
-        let lessonId = $(this).attr("data-lesson-id");
-        let type = $(this).attr("data-type");
-        let checked = $(this).is(":checked") ? 1 : 0;
-        $.ajax({
-            method: "POST",
-            url: base_url + "/student/learning/make-lesson-complete",
-            data: {
-                _token: csrf_token,
-                lessonId: lessonId,
-                status: checked,
-                type: type,
-            },
-            success: function (data) {
-                if (data.status == "success") {
-                    toastr.success(data.message);
-                } else if (data.status == "error") {
-                    toastr.error(data.message);
-                }
-            },
-            error: function (xhr, status, error) {
-                let errors = xhr.responseJSON.errors;
-                $.each(errors, function (key, value) {
-                    toastr.error(value);
-                });
-            },
-        });
+    $(".lesson-completed-checkbox").on("click", function (e) {
+        e.preventDefault();
+        return false;
     });
 
     // Course video button for small devices
@@ -247,5 +274,168 @@ $(document).ready(function () {
 
     $(".wsus__course_sidebar_btn").on("click", function () {
         $(".wsus__course_sidebar").removeClass("show");
+    });
+
+    // Navigator functionality
+    function updateNavigator() {
+        const allLessons = $('.lesson-item');
+        const activeLesson = $('.form-check.item-active .lesson-item');
+        if (activeLesson.length === 0) return;
+
+        const currentIndex = allLessons.index(activeLesson);
+        const totalLessons = allLessons.length;
+        const completedLessonsCount = $('.lesson-completed-checkbox:checked').length;
+
+        // Previous button
+        if (currentIndex === 0) {
+            $('#prev-lesson-btn').css('visibility', 'hidden');
+        } else {
+            $('#prev-lesson-btn').css('visibility', 'visible');
+        }
+
+        // Next / Finish button
+        if (currentIndex === totalLessons - 1) { // If on the last item
+            if (completedLessonsCount === totalLessons) {
+                $('#next-lesson-btn').html('Finish').show();
+            } else {
+                $('#next-lesson-btn').hide();
+            }
+        } else { // If not on the last item
+            $('#next-lesson-btn').html('Next <i class="fas fa-angle-right"></i>').show();
+        }
+    }
+
+    $('#next-lesson-btn').on('click', function(e) {
+        e.preventDefault();
+        const allLessons = $('.lesson-item');
+        const activeLesson = $('.form-check.item-active .lesson-item');
+        const currentIndex = allLessons.index(activeLesson);
+
+        if (currentIndex < allLessons.length - 1) {
+            allLessons.eq(currentIndex + 1).trigger('click');
+        }
+    });
+
+    $('#prev-lesson-btn').on('click', function(e) {
+        e.preventDefault();
+        const allLessons = $('.lesson-item');
+        const activeLesson = $('.form-check.item-active .lesson-item');
+        const currentIndex = allLessons.index(activeLesson);
+
+        if (currentIndex > 0) {
+            allLessons.eq(currentIndex - 1).trigger('click');
+        }
+    });
+
+    $('#prev-lesson-btn').on('click', function(e) {
+        e.preventDefault();
+        const allLessons = $('.lesson-item');
+        const activeLesson = $('.form-check.item-active .lesson-item');
+        const currentIndex = allLessons.index(activeLesson);
+
+        if (currentIndex > 0) {
+            allLessons.eq(currentIndex - 1).trigger('click');
+        }
+    });
+
+    // Course Complete Modal & Review Logic
+    $(document).on('click', '#next-lesson-btn', function(e) {
+        e.preventDefault();
+        if ($(this).text().trim() === 'Finish') {
+            const courseId = $("meta[name='course-id']").attr("content");
+            const certificateUrl = base_url + '/student/download-certificate/' + courseId;
+            $('#downloadCertificateBtn').attr('href', certificateUrl).text('Download Certificate');
+            
+            var completeModal = new bootstrap.Modal(document.getElementById('courseCompleteModal'));
+            completeModal.show();
+        } else {
+            // Regular next button functionality
+            const allLessons = $('.lesson-item');
+            const activeLesson = $('.form-check.item-active .lesson-item');
+            const currentIndex = allLessons.index(activeLesson);
+
+            if (currentIndex < allLessons.length - 1) {
+                allLessons.eq(currentIndex + 1).trigger('click');
+            }
+        }
+    });
+
+    // Star rating interaction
+    const stars = $('.star-rating .fa-star');
+    stars.on('mouseover', function() {
+        const rating = $(this).data('rating');
+        stars.each(function(index) {
+            if (index < rating) {
+                $(this).addClass('selected');
+            } else {
+                $(this).removeClass('selected');
+            }
+        });
+    });
+
+    stars.on('mouseout', function() {
+        const currentRating = $('#ratingInput').val();
+        stars.each(function(index) {
+            if (index < currentRating) {
+                $(this).addClass('selected');
+            } else {
+                $(this).removeClass('selected');
+            }
+        });
+    });
+
+    stars.on('click', function() {
+        const rating = $(this).data('rating');
+        $('#ratingInput').val(rating);
+        stars.each(function(index) {
+            if (index < rating) {
+                $(this).addClass('selected');
+            } else {
+                $(this).removeClass('selected');
+            }
+        });
+    });
+
+    // Review form submission
+    $('#courseReviewForm').on('submit', function(e) {
+        e.preventDefault();
+        const courseId = $("meta[name='course-id']").attr("content");
+        const rating = $('#ratingInput').val();
+        const review = $(this).find('textarea[name="review"]').val();
+
+        if (rating == 0) {
+            toastr.error('Please select a rating');
+            return;
+        }
+
+        $.ajax({
+            method: "POST",
+            url: base_url + "/student/add-review",
+            data: {
+                _token: csrf_token,
+                course_id: courseId,
+                rating: rating,
+                review: review
+            },
+            beforeSend: function() {
+                $(this).find('button[type="submit"]').prop('disabled', true).text('Submitting...');
+            },
+            success: function(data) {
+                toastr.success('Review submitted successfully!');
+                $('#courseReviewForm').find('button[type="submit"]').prop('disabled', true).text('Submitted');
+                $('#courseReviewForm').off('submit');
+            },
+            error: function(xhr, status, error) {
+                let errors = xhr.responseJSON.errors;
+                if(errors){
+                    $.each(errors, function (key, value) {
+                        toastr.error(value);
+                    });
+                } else {
+                    toastr.error(xhr.responseJSON.message || 'Something went wrong');
+                }
+                $(this).find('button[type="submit"]').prop('disabled', false).text('Submit Review');
+            }
+        });
     });
 });

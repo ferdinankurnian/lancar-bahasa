@@ -31,7 +31,7 @@
                                 <img src="{{ asset('uploads/website-images/test.png') }}">
                             </div>
                             <div class="card-body">
-                                <h6 class="card-title count">{{ $attempt }}/{{ $quiz->attempt }}</h6>
+                                <h6 class="card-title count">{{ $attempt }}/{{ $quiz->attempt > 0 ? $quiz->attempt : '∞' }}</h6>
                                 <p class="card-text">{{ __('Attempts') }}</p>
                             </div>
                         </div>
@@ -53,10 +53,14 @@
                                 <img src="{{ asset('uploads/website-images/clock.png') }}">
                             </div>
                             <div class="card-body">
-                                <h6 class="card-title count"><span
-                                        class="hour">{{ __('0') }}</span>{{ __(':') }}<span
-                                        class="minute">{{ __('0') }}</span>{{ __(':') }}<span
-                                        class="second">{{ __('0') }}</span></h6>
+                                @if ($quiz->time > 0)
+                                    <h6 class="card-title count"><span
+                                            class="hour">{{ __('0') }}</span>{{ __(':') }}<span
+                                            class="minute">{{ __('0') }}</span>{{ __(':') }}<span
+                                            class="second">{{ __('0') }}</span></h6>
+                                @else
+                                    <h6 class="card-title count">∞</h6>
+                                @endif
                                 <p class="card-text">{{ __('Remained time') }}</p>
                             </div>
                         </div>
@@ -117,7 +121,9 @@
     <script src="{{ asset('frontend/js/default/quiz-page.js') }}"></script>
     <script>
         $(document).ready(function() {
-            countdown({{ $quiz->time }});
+            @if ($quiz->time > 0)
+                countdown({{ $quiz->time }});
+            @endif
         })
     </script>
 @endpush

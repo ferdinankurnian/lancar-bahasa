@@ -6,7 +6,7 @@
     <section class="wsus__course_video">
         <div class="col-12">
             <div class="wsus__course_header">
-                <a href="{{ route('student.dashboard') }}"><i class="fas fa-angle-left"></i>
+                <a href="{{ route('student.enrolled-courses') }}"><i class="fas fa-angle-left"></i>
                     {{ __('Go back to dashboard') }}</a>
                 <p>{{ __('Your Progress') }}: {{ $courseLectureCompletedByUser }} {{ __('of') }}
                     {{ $courseLectureCount }} ({{ number_format($courseCompletedPercent) }}%)</p>
@@ -118,10 +118,15 @@
                         </div>
                     </div>
                 @endforeach
-
+            </div>
+            <div class="course_navigator">
+                <a href="#" id="prev-lesson-btn"><i class="fas fa-angle-left"></i> Previous</a>
+                <a href="#" id="next-lesson-btn">Next <i class="fas fa-angle-right"></i></a>
             </div>
         </div>
     </section>
+
+    @include('frontend.pages.learning-player.partials._course_complete_modal')
 @endsection
 @push('scripts')
     <script>

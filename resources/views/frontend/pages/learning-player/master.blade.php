@@ -26,6 +26,8 @@
     <link rel="stylesheet" href="{{ asset('global/toastr/toastr.min.css') }}">
     <link rel="stylesheet" href="{{ asset('frontend/css/main.css') }}?v={{$setting?->version}}">
     <link rel="stylesheet" href="{{ asset('frontend/css/frontend.css') }}?v={{$setting?->version}}">
+
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
     <style>
         :root {
             --tg-theme-primary: {{ $setting->primary_color }};

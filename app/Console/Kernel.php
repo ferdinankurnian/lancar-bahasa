@@ -15,6 +15,7 @@ class Kernel extends ConsoleKernel
      */
     protected $commands = [
         'App\Console\Commands\PreNotification',
+        \App\Console\Commands\CleanupCertificates::class,
     ];
     /**
      * Define the application's command schedule.
@@ -40,6 +41,9 @@ class Kernel extends ConsoleKernel
         $cronExpression = "*/$live_mail_send_minutes * * * *";
 
         $schedule->command('prenotification:live')->cron($cronExpression)->withoutOverlapping();
+
+        // Cleanup old cached certificates daily
+        $schedule->command('certificates:cleanup')->daily();
     }
 
     /**
