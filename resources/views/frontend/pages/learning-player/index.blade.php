@@ -42,6 +42,7 @@
             </div>
             <h2 class="video_heading">{{ __('Course Content') }}</h2>
             <div class="accordion" id="accordionExample">
+                @php $lessonCounter = 0; @endphp
                 @foreach ($course->chapters as $chapter)
                     <div class="accordion-item">
                         <h2 class="accordion-header">
@@ -65,6 +66,7 @@
                                                 data-lesson-id="{{ $chapterItem->lesson->id }}" value="1"
                                                 data-type="lesson">
                                             <label class="form-check-label lesson-item"
+                                                data-index="{{ $lessonCounter++ }}"
                                                 data-lesson-id="{{ $chapterItem->lesson->id }}"
                                                 data-chapter-id="{{ $chapter->id }}" data-course-id="{{ $course->id }}"
                                                 data-type="{{$chapterItem->type}}">
@@ -84,6 +86,7 @@
                                                 data-lesson-id="{{ $chapterItem->lesson->id }}" value="1"
                                                 data-type="document">
                                             <label class="form-check-label lesson-item"
+                                                data-index="{{ $lessonCounter++ }}"
                                                 data-lesson-id="{{ $chapterItem->lesson->id }}"
                                                 data-chapter-id="{{ $chapter->id }}" data-course-id="{{ $course->id }}"
                                                 data-type="document">
@@ -102,6 +105,7 @@
                                                 data-lesson-id="{{ $chapterItem->quiz->id }}" value="1"
                                                 data-type="quiz">
                                             <label class="form-check-label lesson-item"
+                                                data-index="{{ $lessonCounter++ }}"
                                                 data-chapter-id="{{ $chapter->id }}" data-course-id="{{ $course->id }}"
                                                 data-lesson-id="{{ $chapterItem->quiz->id }}" data-type="quiz">
                                                 {{ $chapterItem->quiz->title }}
@@ -135,7 +139,6 @@
     <script src="{{ asset('frontend/js/default/learning-player.js') }}?v={{$setting?->version}}"></script>
     <script src="{{ asset('frontend/js/default/quiz-page.js') }}?v={{$setting?->version}}"></script>
     <script src="{{ asset('frontend/js/default/qna.js') }}?v={{$setting?->version}}"></script>
-    <script src="{{ asset('frontend/js/default/qna.js') }}?v={{$setting?->version}}"></script>
     <script src="{{ asset('frontend/js/pdf.min.js') }}"></script>
     <script src="{{ asset('frontend/js/jszip.min.js') }}"></script>
     <script src="{{ asset('frontend/js/docx-preview.min.js') }}"></script>
@@ -144,18 +147,18 @@
         $(document).ready(function() {
             // reset quiz timer
             resetCountdown();
-            // auto click on current lesson
+            // auto load current lesson
             var lessonId = "{{ request('lesson') }}";
             var type = "{{ request('type') }}";
             var currentLessonSelector = $('.lesson-item[data-lesson-id="{{ $currentProgress?->lesson_id }}"][data-type="{{ $currentProgress?->type }}"]');
             var targetLessonSelector = $(`.lesson-item[data-lesson-id="${lessonId}"][data-type="${type}"]`);
 
             if (targetLessonSelector.length) {
-                targetLessonSelector.trigger('click');
+                loadLesson(targetLessonSelector);
             } else if (currentLessonSelector.length) {
-                currentLessonSelector.trigger('click');
+                loadLesson(currentLessonSelector);
             } else {
-                $('.lesson-item:first').trigger('click');
+                loadLesson($('.lesson-item:first'));
             }
 
         })

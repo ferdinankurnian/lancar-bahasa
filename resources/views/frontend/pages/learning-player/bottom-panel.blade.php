@@ -15,11 +15,11 @@
                 type="button" role="tab" aria-controls="pills-contact"
                 aria-selected="false">{{ __('Announcements') }}</button>
         </li>
-        <li class="nav-item" role="presentation">
+        {{-- <li class="nav-item" role="presentation">
             <button class="nav-link" id="pills-disabled-tab" data-bs-toggle="pill" data-bs-target="#pills-disabled"
                 type="button" role="tab" aria-controls="pills-disabled"
                 aria-selected="false">{{ __('Reviews') }}</button>
-        </li>
+        </li> --}}
     </ul>
     <div class="tab-content" id="pills-tabContent">
         <div class="tab-pane fade show active" id="pills-home" role="tabpanel" aria-labelledby="pills-home-tab"
@@ -128,7 +128,7 @@
                 <p class="text-center mt-2">{{ __('No announcement available') }}</p>
             @endforelse
         </div>
-        <div class="tab-pane fade" id="pills-disabled" role="tabpanel" aria-labelledby="pills-disabled-tab"
+        {{-- <div class="tab-pane fade" id="pills-disabled" role="tabpanel" aria-labelledby="pills-disabled-tab"
             tabindex="0">
             <div class="video_review">
                 <h2>{{ __('Reviews') }}</h2>
@@ -178,7 +178,7 @@
                 </div>
 
             </div>
-        </div>
+        </div> --}}
     </div>
 </div>
 

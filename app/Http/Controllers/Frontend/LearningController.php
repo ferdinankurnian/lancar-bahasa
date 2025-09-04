@@ -20,6 +20,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Log;
 
 class LearningController extends Controller {
     function index(string $slug) {
@@ -170,18 +171,24 @@ class LearningController extends Controller {
     }
 
     function makeLessonComplete(Request $request) {
-        $progress = CourseProgress::where(['lesson_id' => $request->lessonId, 'user_id' => userAuth()->id, 'type' => $request->type])->first();
-        if ($progress) {
-            $progress->watched = $request->status;
-            $progress->save();
-            return response()->json(['status' => 'success', 'message' => __('Updated successfully.')]);
-        } else {
-            if ($request->status == 0) {
-                return;
-            }
+        Log::info('makeLessonComplete called', [
+            'lessonId' => $request->lessonId,
+            'userId' => userAuth()->id,
+            'type' => $request->type,
+            'status' => $request->status
+        ]);
 
-            return response()->json(['status' => 'error', 'message' => __('You didnt watched this lesson')]);
-        }
+        // Find or create the CourseProgress record
+        $progress = CourseProgress::firstOrNew([
+            'lesson_id' => $request->lessonId,
+            'user_id' => userAuth()->id,
+            'type' => $request->type
+        ]);
+
+        $progress->watched = $request->status;
+        $progress->save();
+
+        return response()->json(['status' => 'success', 'message' => __('Updated successfully.')]);
     }
 
     function downloadResource(string $lessonId) {

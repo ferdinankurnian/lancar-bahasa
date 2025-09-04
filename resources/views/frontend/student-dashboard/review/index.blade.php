@@ -47,7 +47,7 @@
                                 </tr>
                             @empty
                                 <tr>
-                                    <td colspan="10" class="text-center">{{ __('No orders found!') }}</td>
+                                    <td colspan="10" class="text-center">{{ __('Tidak ada ulasan!') }}</td>
                                 </tr>
                             @endforelse
                         </tbody>
