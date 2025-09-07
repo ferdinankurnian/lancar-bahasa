@@ -62,14 +62,16 @@
                                         <div
                                             class="form-check {{ $chapterItem->lesson->id == $currentProgress?->lesson_id ? 'item-active' : '' }}">
                                             <input @checked(in_array($chapterItem->lesson->id, $alreadyWatchedLectures))
-                                                class="form-check-input lesson-completed-checkbox" type="checkbox"
+                                                class="form-check-input leKuis Passé Composé
+                                                Klik tombol dibawah untuk menuju kuissson-completed-checkbox" type="checkbox"
                                                 data-lesson-id="{{ $chapterItem->lesson->id }}" value="1"
                                                 data-type="lesson">
                                             <label class="form-check-label lesson-item"
                                                 data-index="{{ $lessonCounter++ }}"
                                                 data-lesson-id="{{ $chapterItem->lesson->id }}"
                                                 data-chapter-id="{{ $chapter->id }}" data-course-id="{{ $course->id }}"
-                                                data-type="{{$chapterItem->type}}">
+                                                data-type="{{$chapterItem->Kuis Passé Composé
+                                                Klik tombol dibawah untuk menuju kuistype}}">
                                                 {{ $chapterItem->lesson->title }}
                                                 <span>
                                                     <img src="{{ $chapterItem->type == 'live' ? asset('frontend/img/live.png') : asset('frontend/img/video_icon_black_2.png') }}"
@@ -123,9 +125,9 @@
                     </div>
                 @endforeach
             </div>
-            <div class="course_navigator">
+            <div class="course_navigator d-flex">
                 <a href="#" id="prev-lesson-btn"><i class="fas fa-angle-left"></i> Previous</a>
-                <a href="#" id="next-lesson-btn">Next <i class="fas fa-angle-right"></i></a>
+                <a href="#" class="ms-auto" id="next-lesson-btn">Next <i class="fas fa-angle-right"></i></a>
             </div>
         </div>
     </section>

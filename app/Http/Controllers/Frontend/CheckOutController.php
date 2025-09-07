@@ -15,6 +15,10 @@ class CheckOutController extends Controller
     use GetGlobalInformationTrait;
     function index()
     {
+        if (Cart::content()->isEmpty()) {
+            return redirect()->route('cart')->with(['messege' => __('Your cart is empty. Please add items to proceed to checkout.'), 'alert-type' => 'warning']);
+        }
+
         $products = Cart::content();
 
         foreach($products as $product) {

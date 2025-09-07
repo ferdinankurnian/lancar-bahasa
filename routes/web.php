@@ -120,12 +120,15 @@ Route::group(['middleware' => 'maintenance.mode'], function () {
         Route::get('orders', [StudentOrderController::class, 'index'])->name('orders.index');
         Route::get('order-details/{id}', [StudentOrderController::class, 'show'])->name('order.show');
         Route::get('order/invoice/{id}', [StudentOrderController::class, 'printInvoice'])->name('order.print-invoice');
+        Route::post('orders/{id}/cancel', [StudentOrderController::class, 'cancelOrder'])->name('orders.cancel');
 
         Route::get('reviews', [StudentReviewController::class, 'index'])->name('reviews.index');
         Route::get('reviews/{id}', [StudentReviewController::class, 'show'])->name('reviews.show');
         Route::delete('reviews/{id}', [StudentReviewController::class, 'destroy'])->name('reviews.destroy');
         Route::get('enrolled-courses', [StudentDashboardController::class, 'enrolledCourses'])->name('enrolled-courses');
         Route::get('quiz-attempts', [StudentDashboardController::class, 'quizAttempts'])->name('quiz-attempts');
+
+        Route::post('reset-class', [StudentDashboardController::class, 'resetClass'])->name('reset-class');
 
         /** learning routes */
         Route::get('learning/{slug}', [LearningController::class, 'index'])->name('learning.index');
@@ -261,6 +264,8 @@ Route::group(['middleware' => 'maintenance.mode'], function () {
         Route::get('order-fail', [PaymentController::class, 'order_fail'])->name('order-fail');
         Route::get('order-unfinish/{invoice_id?}', [PaymentController::class, 'order_unfinish'])->name('order-unfinish');
         Route::post('midtrans-callback-success', [PaymentController::class, 'midtransCallbackSuccess'])->name('midtrans.callback.success');
+
+        Route::get('/midtrans/finalize', [Modules\Midtrans\app\Http\Controllers\MidtransController::class, 'finalizeTransaction']);
 
         Route::post('tinymce-upload-image', [TinymceImageUploadController::class, 'upload']);
         Route::delete('tinymce-delete-image', [TinymceImageUploadController::class, 'destroy']);

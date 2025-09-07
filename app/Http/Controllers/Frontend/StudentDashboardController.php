@@ -161,4 +161,15 @@ class StudentDashboardController extends Controller
         $dompdf->stream("certificate.pdf");
         return redirect()->back();
     }
+
+    public function resetClass()
+    {
+        Enrollment::where('user_id', userAuth()->id)->delete();
+        QuizResult::where('user_id', userAuth()->id)->delete();
+        CourseReview::where('user_id', userAuth()->id)->delete();
+        Order::where('buyer_id', userAuth()->id)->delete();
+        CourseProgress::where('user_id', userAuth()->id)->delete();
+
+        return redirect()->back()->with('success', 'Your class data has been reset successfully!');
+    }
 }
