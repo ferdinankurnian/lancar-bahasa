@@ -4,7 +4,7 @@
     </div>
     <nav class="dashboard__sidebar-menu">
         <ul class="list-wrap">
-            
+
             <li class="{{ Route::is('student.dashboard') ? 'active' : '' }}">
                 <a href="{{ route('student.dashboard') }}">
                     <i class="fas fa-tachometer-alt"></i>{{ __('Dashboard') }}</a>
@@ -49,6 +49,7 @@
                     {{ __('Logout') }}
                 </a>
             </li>
+            
         </ul>
     </nav>
 </div>
@@ -58,3 +59,5 @@
     @csrf
 </form>
 {{-- end admin logout form --}}
+
+

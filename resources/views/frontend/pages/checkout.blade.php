@@ -21,7 +21,9 @@
                         _token: "{{ csrf_token() }}",
                     },
                     success: function(response) {
-                        if (response.snap_token) {
+                        if (response.success) {
+                            window.location.href = response.redirect;
+                        } else if (response.snap_token) {
                             snap.pay(response.snap_token, {
                                 onSuccess: function(result) {
                                     // Redirect to our new finalize route to process the transaction securely

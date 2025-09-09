@@ -161,4 +161,5 @@ class StudentDashboardController extends Controller
         $dompdf->stream("certificate.pdf");
         return redirect()->back();
     }
-}
+
+    }

@@ -96,6 +96,7 @@ class MidtransController extends Controller
     {
         $user = Auth::user();
         $payable_amount = Session::get('payable_amount', (int) Cart::total(2, '.', ''));
+
         $invoiceId = 'INV-' . strtoupper(Str::random(10));
 
         // Create the Order
@@ -130,52 +131,54 @@ class MidtransController extends Controller
             ]);
         }
 
-        $itemDetails = [];
-        foreach (Cart::content() as $item) {
-            $itemDetails[] = [
-                'id' => $item->id,
-                'price' => $item->price,
-                'quantity' => $item->qty,
-                'name' => $item->name,
-            ];
-        }
+        if ($payable_amount == 0) {
+            // Handle free order directly
+            $order->status = 'completed';
+            $order->payment_status = 'paid';
+            $order->paid_amount = 0;
+            $order->payment_method = 'Free Order';
+            $order->transaction_id = 'FREE-' . $order->invoice_id;
+            $order->payment_details = json_encode(['type' => 'free_order']);
+            $order->save();
 
-        if (Session::has('coupon_code')) {
-            $itemDetails[] = [
-                'id' => 'COUPON_' . Session::get('coupon_code'),
-                'price' => -(int)Session::get('coupon_discount_amount'),
-                'quantity' => 1,
-                'name' => 'Coupon Discount'
-            ];
-        }
+            Log::info('Free order completed: ' . $order->invoice_id);
 
-        $params = [
-            'transaction_details' => [
+            // Create Enrollments
+            foreach (Cart::content() as $cartItem) {
+                Enrollment::firstOrCreate(
+                    ['user_id' => $user->id, 'course_id' => $cartItem->id],
+                    ['order_id' => $order->id, 'has_access' => 1]
+                );
+
+                // Handle instructor wallet
+                $instructor = Course::find($cartItem->id)->instructor;
+                if ($instructor) {
+                    $commissionAmount = $cartItem->price * ($order->commission_rate / 100);
+                    $amountAfterCommission = $cartItem->price - $commissionAmount;
+                    $instructor->increment('wallet_balance', $amountAfterCommission);
+                }
+            }
+
+            // Send Email
+            $this->handleMailSending([
+                'email' => $user->email,
+                'name' => $user->name,
                 'order_id' => $order->invoice_id,
-                'gross_amount' => $payable_amount,
-            ],
-            'customer_details' => [
-                'first_name' => $user->name ?? 'Guest',
-                'email' => $user->email ?? 'guest@example.com',
-            ],
-            'item_details' => $itemDetails,
-        ];
+                'paid_amount' => currency(0),
+                'payment_method' => 'Gratis'
+            ]);
 
-        try {
-            $snapToken = Snap::getSnapToken($params);
-
-            // If Snap Token is successfully created, clear the cart and store pending order id
+            // Clear cart and sessions
             Cart::destroy();
-            Session::put('pending_order_id', $order->invoice_id);
+            Session::forget(['coupon_code', 'offer_percentage', 'coupon_discount_amount', 'payable_amount', 'pending_order_id']);
 
-            return response()->json(['snap_token' => $snapToken]);
-        } catch (\Exception $e) {
-            Log::error('Midtrans Snap Token Error: ' . $e->getMessage());
-            return response()->json(['error' => 'Failed to create payment token.'], 500);
+            return response()->json(['success' => true, 'redirect' => route('order-success')]);
         }
+
     }
 
     public function finalizeTransaction(Request $request)
+
     {
         $orderId = $request->query('order_id');
 
@@ -402,16 +405,7 @@ class MidtransController extends Controller
 
         $user = User::find($order->buyer_id);
 
-        $itemDetails = [];
-        foreach ($order->orderItems as $item) {
-            $courseTitle = $item->course->title ?? 'Course'; 
-            $itemDetails[] = [
-                'id' => $item->course_id,
-                'price' => $item->price,
-                'quantity' => 1,
-                'name' => $courseTitle,
-            ];
-        }
+
 
         if ($order->has_coupon) {
             $itemDetails[] = [

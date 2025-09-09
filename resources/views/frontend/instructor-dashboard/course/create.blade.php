@@ -57,7 +57,6 @@
                                     <select name="demo_video_storage" id="demo_video_storage" class="form-select">
                                         <option @selected(@$course?->demo_video_storage == 'upload') value="upload">{{ __('upload') }}</option>
                                         <option @selected(@$course?->demo_video_storage == 'youtube') value="youtube">{{ __('youtube') }}</option>
-                                        <option @selected(@$course?->demo_video_storage == 'vimeo') value="vimeo">{{ __('vimeo') }}</option>
                                         <option @selected(@$course?->demo_video_storage == 'external_link') value="external_link">
                                             {{ __('external_link') }}</option>
                                     </select>
@@ -125,4 +124,25 @@
 
 @push('scripts')
     <script src="{{ asset('frontend/js/default/courses.js') }}"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const priceInput = document.getElementById('price');
+            const discountInput = document.getElementById('discount_price');
+
+            function toggleDiscountField() {
+                if (priceInput.value.trim() !== '') {
+                    discountInput.disabled = false;
+                } else {
+                    discountInput.disabled = true;
+                    discountInput.value = ''; // Optional: clear if disabled
+                }
+            }
+
+            // Initial check
+            toggleDiscountField();
+
+            // Listen for changes
+            priceInput.addEventListener('input', toggleDiscountField);
+        });
+    </script>
 @endpush
