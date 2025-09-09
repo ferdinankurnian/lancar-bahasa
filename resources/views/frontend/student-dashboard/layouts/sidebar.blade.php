@@ -4,7 +4,7 @@
     </div>
     <nav class="dashboard__sidebar-menu">
         <ul class="list-wrap">
-
+            
             <li class="{{ Route::is('student.dashboard') ? 'active' : '' }}">
                 <a href="{{ route('student.dashboard') }}">
                     <i class="fas fa-tachometer-alt"></i>{{ __('Dashboard') }}</a>
@@ -49,12 +49,6 @@
                     {{ __('Logout') }}
                 </a>
             </li>
-            {{-- <li>
-                <a href="#" onclick="event.preventDefault(); document.getElementById('reset-class-form').submit();">
-                    <i class="fas fa-sign-out-alt"></i>
-                    {{ __('Reset Class') }}
-                </a>
-            </li> --}}
         </ul>
     </nav>
 </div>
@@ -64,9 +58,3 @@
     @csrf
 </form>
 {{-- end admin logout form --}}
-
-{{-- start reset class form --}}
-<form id="reset-class-form" action="{{ route('student.reset-class') }}" method="POST" class="d-none">
-    @csrf
-</form>
-{{-- end reset class form --}}

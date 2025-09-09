@@ -20,13 +20,22 @@ class CourseStoreRequest extends FormRequest
             'thumbnail' => ['required', 'max:255'],
             'demo_video_source' => ['nullable', 'string'],
             'path' => ['nullable', 'string'],
-            'price' => ['required', 'numeric', 'min:0'],
+            'price' => ['nullable', 'numeric', 'min:0'],
             'discount_price' => ['nullable', 'numeric', new ValidateDiscountRule()],
             'description' => ['required', 'string', 'max:5000'],
             'instructor' => ['required', 'numeric'],
         ];
 
         return $rules;
+    }
+
+    protected function prepareForValidation()
+    {
+        if (empty($this->price)) {
+            $this->merge([
+                'price' => 0,
+            ]);
+        }
     }
 
     function messages(): array
@@ -40,7 +49,6 @@ class CourseStoreRequest extends FormRequest
             'thumbnail.max' => __('Thumbnail must be less than 255 characters long'),
             'demo_video_source.string' => __('Demo video source must be a string'),
             'path.string' => __('Path must be a string'),
-            'price.required' => __('Price is required'),
             'price.numeric' => __('Price must be a number'),
             'price.min' => __('Price must be greater than or equal to 0'),
             'discount.numeric' => __('Discount must be a number'),

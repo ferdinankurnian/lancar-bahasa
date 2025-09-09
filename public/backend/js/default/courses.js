@@ -25,7 +25,9 @@ const loader = `
 /** On Document Load */
 $(document).ready(function () {
     $("#demo_video_storage").on("change", function () {
+        console.log('change event triggered');
         let select_source = $(this).val();
+        console.log(select_source);
         if (select_source == "upload") {
             $(".upload").removeClass("d-none");
             $(".external_link").addClass("d-none");
@@ -34,6 +36,9 @@ $(document).ready(function () {
             $(".external_link").removeClass("d-none");
         }
     });
+
+    console.log('triggering change event');
+    $("#demo_video_storage").trigger('change');
 
     // course Create form
     $(".course-form").on("submit", function (e) {

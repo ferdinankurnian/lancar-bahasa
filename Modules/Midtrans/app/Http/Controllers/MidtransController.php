@@ -98,6 +98,38 @@ class MidtransController extends Controller
         $payable_amount = Session::get('payable_amount', (int) Cart::total(2, '.', ''));
         $invoiceId = 'INV-' . strtoupper(Str::random(10));
 
+        // Create the Order
+        $order = Order::create([
+            'invoice_id' => $invoiceId,
+            'buyer_id' => $user->id,
+            'status' => 'pending',
+            'has_coupon' => Session::has('coupon_code') ? 1 : 0,
+            'coupon_code' => Session::get('coupon_code'),
+            'coupon_discount_percent' => Session::get('offer_percentage'),
+            'coupon_discount_amount' => Session::get('coupon_discount_amount'),
+            'payment_method' => '-',
+            'payment_status' => 'pending',
+            'payable_amount' => $payable_amount,
+            'gateway_charge' => 0,
+            'payable_with_charge' => $payable_amount,
+            'paid_amount' => 0,
+            'conversion_rate' => 1,
+            'payable_currency' => getSessionCurrency(),
+            'payment_details' => null,
+            'transaction_id' => null,
+            'commission_rate' => Cache::get('setting')->commission_rate,
+        ]);
+
+        // Create OrderItems
+        foreach (Cart::content() as $cartItem) {
+            OrderItem::create([
+                'order_id' => $order->id,
+                'price' => $cartItem->price,
+                'course_id' => $cartItem->id,
+                'commission_rate' => $order->commission_rate,
+            ]);
+        }
+
         $itemDetails = [];
         foreach (Cart::content() as $item) {
             $itemDetails[] = [
@@ -119,7 +151,7 @@ class MidtransController extends Controller
 
         $params = [
             'transaction_details' => [
-                'order_id' => $invoiceId,
+                'order_id' => $order->invoice_id,
                 'gross_amount' => $payable_amount,
             ],
             'customer_details' => [
@@ -130,38 +162,6 @@ class MidtransController extends Controller
         ];
 
         try {
-            // Create the Order
-            $order = Order::create([
-                'invoice_id' => $invoiceId,
-                'buyer_id' => $user->id,
-                'status' => 'pending',
-                'has_coupon' => Session::has('coupon_code') ? 1 : 0,
-                'coupon_code' => Session::get('coupon_code'),
-                'coupon_discount_percent' => Session::get('offer_percentage'),
-                'coupon_discount_amount' => Session::get('coupon_discount_amount'),
-                'payment_method' => '-',
-                'payment_status' => 'pending',
-                'payable_amount' => $payable_amount,
-                'gateway_charge' => 0,
-                'payable_with_charge' => $payable_amount,
-                'paid_amount' => 0,
-                'conversion_rate' => 1,
-                'payable_currency' => getSessionCurrency(),
-                'payment_details' => null,
-                'transaction_id' => null,
-                'commission_rate' => Cache::get('setting')->commission_rate,
-            ]);
-
-            // Create OrderItems
-            foreach (Cart::content() as $cartItem) {
-                OrderItem::create([
-                    'order_id' => $order->id,
-                    'price' => $cartItem->price,
-                    'course_id' => $cartItem->id,
-                    'commission_rate' => $order->commission_rate,
-                ]);
-            }
-
             $snapToken = Snap::getSnapToken($params);
 
             // If Snap Token is successfully created, clear the cart and store pending order id
@@ -171,11 +171,6 @@ class MidtransController extends Controller
             return response()->json(['snap_token' => $snapToken]);
         } catch (\Exception $e) {
             Log::error('Midtrans Snap Token Error: ' . $e->getMessage());
-            // Clean up the created order if Snap token generation fails
-            if (isset($order) && $order->exists) {
-                $order->update(['status' => 'failed', 'payment_status' => 'failed']);
-            }
-            Cart::destroy(); // Clear cart on error
             return response()->json(['error' => 'Failed to create payment token.'], 500);
         }
     }

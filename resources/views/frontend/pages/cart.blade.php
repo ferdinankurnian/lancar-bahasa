@@ -67,7 +67,7 @@
                                             @else
                                             @endif
                                         </td>
-                                        <td class="product__price">{{ currency($product->price) }}</td>
+                                        <td class="product__price">@if($product->price == 0) {{ __('Gratis') }} @else {{ currency($product->price) }} @endif</td>
                                         <td class="product__remove">
                                             <a href="{{ route('remove-cart-item', $product->rowId) }}">×</a>
                                         </td>
@@ -107,7 +107,7 @@
                                         <span class="discount-amount">{{ currency(0) }}</span>
                                     @endif
                                 </li>
-                                <li>{{ __('Total') }} <span class="amount">{{ $total }}</span></li>
+                                <li>{{ __('Total') }} <span class="amount">@if($cartTotal - $discountAmount == 0) {{ __('Gratis') }} @else {{ $total }} @endif</span></li>
                             </ul>
                             <a href="{{ route('checkout.index') }}" class="btn">{{ __('Proceed to checkout') }}</a>
                         </div>

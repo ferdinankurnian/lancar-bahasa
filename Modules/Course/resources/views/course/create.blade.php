@@ -94,9 +94,7 @@
                                                             </option>
                                                             <option @selected(@$course?->demo_video_storage == 'youtube') value="youtube">
                                                                 {{ __('youtube') }}</option>
-                                                            <option @selected(@$course?->demo_video_storage == 'vimeo') value="vimeo">
-                                                                {{ __('vimeo') }}
-                                                            </option>
+
                                                             <option @selected(@$course?->demo_video_storage == 'external_link') value="external_link">
                                                                 {{ __('external_link') }}</option>
                                                         </select>
@@ -104,7 +102,7 @@
                                                 </div>
 
                                                 <div
-                                                    class="col-md-6 upload {{ @$course?->demo_video_storage == 'upload' ? '' : 'd-none' }}">
+                                                    class="col-md-6 upload {{ (!isset($course) || @$course?->demo_video_storage == 'upload') ? '' : 'd-none' }}">
                                                     <div class="from-group mb-3">
                                                         <label class="form-file-manager-label"
                                                             for="">{{ __('Path') }}
@@ -125,7 +123,7 @@
                                                 </div>
 
                                                 <div
-                                                    class="col-md-6 external_link {{ @$course?->demo_video_storage != 'upload' ? '' : 'd-none' }}">
+                                                    class="col-md-6 external_link {{ (!isset($course) || @$course?->demo_video_storage == 'upload') ? 'd-none' : '' }}">
                                                     <div class="form-grp">
                                                         <label for="meta_description">{{ __('Path') }}
                                                             <code></code></label>
@@ -142,8 +140,8 @@
 
                                                 <div class="col-md-6">
                                                     <div class="form-group">
-                                                        <label for="price">{{ __('Price') }} <code>*</code></label>
-                                                        <input id="price" name="price" type="text"
+                                                        <label for="price">{{ __('Price') }} <code>*</code> <small>({{ __('Leave empty to make it free') }})</small></label>
+                                                        <input id="price" name="price" type="text" placeholder="Free"
                                                             class="form-control" value="{{ @$course?->price }}">
                                                     </div>
                                                 </div>
@@ -177,7 +175,33 @@
 @endsection
 
 @push('js')
-    <script src="{{ asset('backend/js/default/courses.js') }}"></script>
+        <script src="{{ asset('backend/js/default/courses.js') }}"></script>
+    <script>
+        $(document).ready(function () {
+            $("#demo_video_storage").on("change", function () {
+                let select_source = $(this).val();
+                if (select_source == "upload") {
+                    $(".upload").removeClass("d-none");
+                    $(".external_link").addClass("d-none");
+                } else {
+                    $(".upload").addClass("d-none");
+                    $(".external_link").removeClass("d-none");
+                }
+            }).trigger('change');
+
+            // Disable discount if price is empty or 0
+            function toggleDiscount() {
+                const price = parseFloat($('#price').val()) || 0;
+                if (price > 0) {
+                    $('#discount_price').prop('disabled', false);
+                } else {
+                    $('#discount_price').prop('disabled', true).val('');
+                }
+            }
+            $('#price').on('input', toggleDiscount);
+            toggleDiscount(); // Initial check
+        });
+    </script>
 @endpush
 
 @push('css')

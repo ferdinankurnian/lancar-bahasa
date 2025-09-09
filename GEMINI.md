@@ -1,2 +1,3 @@
-using midtrans as the only payment
-laravel project
+- using midtrans as the only payment
+- laravel project
+- i always speak the feature in indonesian, so you can check it in @lang/id.json, the origin is english in @lang/en.json

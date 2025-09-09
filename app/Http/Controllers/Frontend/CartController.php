@@ -14,12 +14,6 @@ class CartController extends Controller {
     use RedirectHelperTrait;
 
     function index() {
-        // If coming from a successful payment, ensure cart is empty
-        if (Session::has('enrollSuccess')) {
-            Cart::destroy();
-            Session::forget('enrollSuccess');
-        }
-
         // if cart is empty then remove coupon session
         if (Cart::content()->count() == 0) {
             $this->destroyCouponSession();
@@ -29,9 +23,10 @@ class CartController extends Controller {
         $cartTotal = $this->cartTotal();
         $discountPercent = Session::has('offer_percentage') ? Session::get('offer_percentage') : 0;
         $discountAmount = ($cartTotal * $discountPercent) / 100;
-        $total = currency($cartTotal - $discountAmount);
+        $totalAmount = $cartTotal - $discountAmount;
+        $total = currency($totalAmount);
         $coupon = Session::has('coupon_code') ? Session::get('coupon_code') : '';
-        return view('frontend.pages.cart', compact('products', 'total', 'discountAmount', 'discountPercent', 'coupon'));
+        return view('frontend.pages.cart', compact('products', 'cartTotal', 'total', 'totalAmount', 'discountAmount', 'discountPercent', 'coupon'));
     }
 
     function addToCart(Request $request, string $id) {
@@ -39,14 +34,8 @@ class CartController extends Controller {
             return response(['status' => 'error', 'message' => 'Already added to cart!']);
         }
         if ($this->checkIfOwnCourse($id)) {
-            return response(['status' => 'error', 'message' => __('You can not add to cart your own course!')]);
+            return response(['status' => 'error', 'message' => 'You can not add to cart your own course!']);
         }
-
-        // Check if the user is already enrolled in this course
-        if (auth()->check() && \Modules\Order\app\Models\Enrollment::where('user_id', auth()->id())->where('course_id', $id)->exists()) {
-            return response(['status' => 'error', 'message' => __('You are already enrolled in this course!')]);
-        }
-
         $course = Course::active()->where('id', $id)->first();
 
         $price = $course->discount > 0 ? $course->discount : $course->price;

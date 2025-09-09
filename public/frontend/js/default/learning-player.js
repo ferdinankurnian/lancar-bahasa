@@ -116,9 +116,7 @@ function loadLesson(lessonElement) {
             let playerHtml;
             const { file_info } = data;
 
-            if (data.view) {
-                playerHtml = data.view;
-            } else if (file_info.file_type != 'video' && file_info.storage != 'iframe' && (file_info.type == 'lesson' || file_info.type == 'aws' || file_info.type == 'wasabi' || file_info.type == 'live')) {
+            if (file_info.file_type != 'video' && file_info.storage != 'iframe' && (file_info.type == 'lesson' || file_info.type == 'aws' || file_info.type == 'wasabi' || file_info.type == 'live')) {
                 if (file_info.storage == 'upload') {
                     playerHtml = `<div class="resource-file">
                     <div class="file-info">
@@ -193,7 +191,18 @@ function loadLesson(lessonElement) {
                 playerHtml = data.view;
             } else if (file_info.storage == 'iframe' || file_info.type == 'document') {
                 playerHtml = `<iframe class="iframe-video" src="${file_info.type == 'document' ? base_url + file_info.file_path : file_info.file_path}" frameborder="0" allowfullscreen></iframe>`
-            } 
+            } else if (file_info.type == 'quiz') {
+                playerHtml = `<div class="resource-file">
+                <div class="file-info">
+                    <div class="text-center">
+                        <img src="/uploads/website-images/quiz.png" alt="">
+                        <h6 class="mt-2">${file_info.title}</h6>
+                        <p>${quiz_st_des_txt}</p>
+                        <a href="/student/learning/quiz/${file_info.id}" class="btn btn-primary">${quiz_st_txt}</a>
+                    </div>
+                </div>
+            </div>`
+            }
 
             if (videojs.getPlayers()["vid1"]) {
                 videojs.getPlayers()["vid1"].dispose();

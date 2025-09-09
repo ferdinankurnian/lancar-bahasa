@@ -53,11 +53,6 @@ class LearningController extends Controller {
             ->pluck('lesson_id')
             ->toArray();
 
-        $completedQuizResults = QuizResult::where('user_id', userAuth()->id)
-            ->whereIn('quiz_id', $alreadyCompletedQuiz)
-            ->get()
-            ->keyBy('quiz_id');
-
         $announcements = Announcement::where('course_id', $course->id)->orderBy('id', 'desc')->get();
 
         $courseLectureCount = CourseChapterItem::whereHas('chapter', function ($q) use ($course) {
@@ -88,8 +83,7 @@ class LearningController extends Controller {
             'courseLectureCount',
             'courseLectureCompletedByUser',
             'alreadyWatchedLectures',
-            'alreadyCompletedQuiz',
-            'completedQuizResults'
+            'alreadyCompletedQuiz'
         ));
     }
 
@@ -168,12 +162,10 @@ class LearningController extends Controller {
                 ]);
             }
         } else {
-            $quiz = Quiz::findOrFail($request->lessonId);
-            $quizResult = QuizResult::where('user_id', userAuth()->id)->where('quiz_id', $request->lessonId)->orderByDesc('id')->first();
+            $fileInfo = array_merge(Quiz::findOrFail($request->lessonId)->toArray(), ['type' => 'quiz']);
 
             return response()->json([
-                'view' => view('frontend.pages.learning-player.partials.quiz-card', compact('quiz', 'quizResult'))->render(),
-                'file_info' => array_merge($quiz->toArray(), ['type' => 'quiz']),
+                'file_info' => $fileInfo,
             ]);
         }
     }

@@ -132,39 +132,8 @@
                         <div style="margin-bottom: 1rem;" class="text-md-right">
                             <a target="_blank" href="{{ route('student.order.print-invoice', $order->id) }}" class="btn btn-warning btn-icon icon-left print-btn"><i class="fas fa-print"></i>
                                 {{ __('Print') }}</a>
-
-                            @if ($order->payment_status == 'pending')
-                                <button type="button" class="btn btn-danger btn-icon icon-left ms-2" data-bs-toggle="modal" data-bs-target="#cancelOrderModal">
-                                    <i class="fas fa-times"></i> {{ __('Cancel Transaction') }}
-                                </button>
-                            @endif
                         </div>
                     </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    
-    </div>
-
-    <!-- Cancel Order Modal -->
-    <div class="modal fade" id="cancelOrderModal" tabindex="-1" aria-labelledby="cancelOrderModalLabel" aria-hidden="true" style="z-index: 1051;" data-bs-backdrop="false">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="cancelOrderModalLabel">{{ __('Confirm Cancellation') }}</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    {{ __('Are you sure you want to cancel this transaction?') }}
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{{ __('Close') }}</button>
-                    <form id="cancel-order-form" action="{{ route('student.orders.cancel', $order->id) }}" method="POST">
-                        @csrf
-                        <button type="submit" class="btn btn-danger">{{ __('Cancel Transaction') }}</button>
-                    </form>
                 </div>
             </div>
         </div>

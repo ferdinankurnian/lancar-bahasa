@@ -1937,12 +1937,19 @@ li.level-wrapper b {
 }
 
 .course_navigator {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
     padding: 10px 20px;
     border-top: 1px solid #ccc;
     position: absolute;
     bottom: 0;
     width: 100%;
     background: #efeefe;
+}
+
+#next-lesson-btn {
+    margin-left: auto;
 }
 
 .wsus__course_header_btn:hover,

@@ -39,7 +39,7 @@
                             <option value="aws">{{ config('course.storage_source.aws') }}</option>
                         @endif
                         @foreach (config('course.storage_source') as $key => $value)
-                            @if($key != 'aws' && $key != 'wasabi')
+                            @if($key != 'aws' && $key != 'wasabi' && $key != 'vimeo')
                                 <option value="{{ $key }}">{{ $value }}</option>
                             @endif
                         @endforeach
@@ -133,4 +133,22 @@
             <button type="submit" class="btn btn-primary submit-btn">{{ __('Create') }}</button>
         </div>
     </form>
+
+    <script>
+        $(document).ready(function() {
+            function toggleFields() {
+                const sourceVal = $('#source').val();
+                if (sourceVal === '') {
+                    $('#file_type').prop('disabled', true);
+                    $('.upload, .cloud_storage, .link_path').addClass('d-none').find('input, select').prop('disabled', true);
+                } else {
+                    $('#file_type').prop('disabled', false);
+                    // Assuming existing JS handles show/hide for path sections
+                    $('.upload, .cloud_storage, .link_path').find('input, select').prop('disabled', false);
+                }
+            }
+            $('#source').on('change', toggleFields);
+            toggleFields(); // Initial state
+        });
+    </script>
 </div>
