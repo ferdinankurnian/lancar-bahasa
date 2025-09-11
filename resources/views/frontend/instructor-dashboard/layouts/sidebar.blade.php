@@ -46,7 +46,7 @@
     </div>
     <nav class="dashboard__sidebar-menu">
         <ul class="list-wrap">
-            <li class="{{ Route::is('instructor.zoom-setting.index') ? 'active' : '' }}">
+            {{-- <li class="{{ Route::is('instructor.zoom-setting.index') ? 'active' : '' }}">
                 <a href="{{ route('instructor.zoom-setting.index') }}">
                     <i class="fas fa-video"></i>
                     {{ __('Zoom live setting') }}
@@ -57,7 +57,7 @@
                     <i class="fas fa-video"></i>
                     {{ __('Jitsi live setting') }}
                 </a>
-            </li>
+            </li> --}}
             <li class="{{ Route::is('instructor.setting.index') ? 'active' : '' }}">
                 <a href="{{ route('instructor.setting.index') }}">
                     <i class="fas fa-user-cog"></i>

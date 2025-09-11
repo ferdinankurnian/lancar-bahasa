@@ -64,9 +64,9 @@
                                                         <li><a class="dropdown-item add-lesson-btn" data-type="document"
                                                                 data-chapterid="{{ $chapter->id }}"
                                                                 href="javascript:;">{{ __('Add Document') }}</a></li>
-                                                        <li><a class="dropdown-item add-lesson-btn" data-type="live"
+                                                        {{-- <li><a class="dropdown-item add-lesson-btn" data-type="live"
                                                                 data-chapterid="{{ $chapter->id }}"
-                                                                href="javascript:;">{{ __('Add Live lesson') }}</a></li>
+                                                                href="javascript:;">{{ __('Add Live lesson') }}</a></li> --}}
                                                         <li><a class="dropdown-item add-lesson-btn" data-type="quiz"
                                                                 data-chapterid="{{ $chapter->id }}"
                                                                 href="javascript:;">{{ __('Add Quiz') }}</a></li>
