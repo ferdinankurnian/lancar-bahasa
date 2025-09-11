@@ -47,7 +47,11 @@
                         }
                     },
                     error: function(xhr, status, error) {
-                        toastr.error("{{ __('An error occurred while preparing payment. Please try again.') }}");
+                        let errorMessage = "{{ __('An error occurred while preparing payment. Please try again.') }}";
+                        if (xhr.responseJSON && xhr.responseJSON.error) {
+                            errorMessage = xhr.responseJSON.error;
+                        }
+                        toastr.error(errorMessage);
                         console.error(xhr.responseText);
                     }
                 });

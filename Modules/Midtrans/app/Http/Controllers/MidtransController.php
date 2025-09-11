@@ -175,6 +175,47 @@ class MidtransController extends Controller
             return response()->json(['success' => true, 'redirect' => route('order-success')]);
         }
 
+        $itemDetails = [];
+        foreach (Cart::content() as $cartItem) {
+            $itemDetails[] = [
+                'id'       => $cartItem->id,
+                'price'    => (int)$cartItem->price,
+                'quantity' => (int)$cartItem->qty,
+                'name'     => Str::limit($cartItem->name, 50),
+            ];
+        }
+
+        if ($order->has_coupon) {
+            $itemDetails[] = [
+                'id' => 'COUPON_' . $order->coupon_code,
+                'price' => -(int)$order->coupon_discount_amount,
+                'quantity' => 1,
+                'name' => 'Coupon Discount'
+            ];
+        }
+
+        $params = [
+            'transaction_details' => [
+                'order_id' => $order->invoice_id,
+                'gross_amount' => (int)$order->payable_amount,
+            ],
+            'customer_details' => [
+                'first_name' => $user->name ?? 'Guest',
+                'email' => $user->email ?? 'guest@example.com',
+            ],
+            'item_details' => $itemDetails,
+        ];
+
+        try {
+            $snapToken = Snap::getSnapToken($params);
+            Session::put('pending_order_id', $order->invoice_id);
+            return response()->json(['snap_token' => $snapToken]);
+        } catch (\Exception $e) {
+            Log::error('Midtrans Snap Token Error on create: ' . $e->getMessage());
+            $order->delete(); // Clean up the failed order
+            // Return a proper error response for the AJAX call
+            return response()->json(['error' => __('Failed to create payment token. Please try again.')], 500);
+        }
     }
 
     public function finalizeTransaction(Request $request)
